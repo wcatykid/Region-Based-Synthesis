@@ -6,7 +6,6 @@ public class StringUtilities
     private final static String SUFFIX = "--------------";
     private final static int INDENT_SIZE = 4;
     private final static char INDENT_CHAR = ' ';
-    private final static String INDENT_STR;
 
     /**
      * @param sz -- width of the indentation (in no. of characters)
@@ -23,11 +22,6 @@ public class StringUtilities
         return s;
     }
 
-    static
-    {
-        INDENT_STR = generateIndentString(INDENT_SIZE, INDENT_CHAR);
-    }
-    
     /**
      * @param sz -- width of the indentation (in no. of characters)
      * @param c -- the character to use for construction
@@ -58,7 +52,6 @@ public class StringUtilities
     {
         return constrIndentString(INDENT_SIZE, INDENT_CHAR, level);
     }
-    
 
     /**
      * @param middle -- string to be sandwiched

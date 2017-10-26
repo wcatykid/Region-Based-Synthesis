@@ -2,8 +2,9 @@ package exceptions;
 
 public class RangeException extends Exception
 {
+	private static final long serialVersionUID = 7060298957008160228L;
 
-    public RangeException()
+	public RangeException()
     {
         // TODO Auto-generated constructor stub
     }

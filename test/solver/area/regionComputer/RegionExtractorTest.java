@@ -1,17 +1,10 @@
 package solver.area.regionComputer;
 
-import static org.junit.Assert.*;
-
 import java.util.Vector;
-
 import org.junit.Test;
-
 import representation.regions.Region;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParserTest;
-import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;
-import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
-import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
 import utilities.Assertions;
 import utilities.StringUtilities;
 
@@ -144,7 +137,7 @@ public class RegionExtractorTest
         runRegionDetailVerification(indent + 1, "{ x^2 - 4x; 0 }                       // LH, Page 383 #7; Implied Domain", 1, true, 1, true);
         runRegionDetailVerification(indent + 1, "{ 3 - 2x - x^2; 0 }                   // LH, Page 383 #8; Implied Domain", 1, true, 1, true);
         runRegionDetailVerification(indent + 1, "{ x^2 + 2x + 1; 3x + 3 }              // LH, Page 383 #9; Implied Domain", 1, true, 1, true);
-        runRegionDetailVerification(indent + 1, "{ x ; 2 - x ; 0}                      // LH, Page 383 #11; Implied Domain with 3 functions", 1, true, 1, true);  
+        runRegionDetailVerification(indent + 1, "{ x ; 2 - x ; 0}                      // LH, Page 383 #11; Implied Domain with 3 functions", 2, true, 1, true);  
         runRegionDetailVerification(indent + 1, "{ -x^2 + 4 ; x^2 - 4 } //", 1, true, 1, true);
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));

@@ -3,7 +3,7 @@ import java.io.Serializable;
 
 import utilities.Utilities;
 
-public class Point implements Comparable, Serializable
+public class Point implements Comparable<Point>, Serializable
 {
 	private static final long serialVersionUID = -1459271016405991323L;
 	protected double x;
@@ -133,18 +133,14 @@ public class Point implements Comparable, Serializable
         return Double.hashCode(x) + Double.hashCode(y);
     }
     
-    @Override
-    public int compareTo(Object arg)
-    {
-        if (!(arg instanceof Point)) return 1;
+	@Override
+	public int compareTo(Point arg)
+	{
+        if (this.lessThan(arg)) return -1;
         
-        Point that = (Point) arg;
-
-        if (this.lessThan(that)) return -1;
-        
-        if (this.greaterThan(that)) return 1;
+        if (this.greaterThan(arg)) return 1;
         
         return 0;
-    }
+	}
     
 }

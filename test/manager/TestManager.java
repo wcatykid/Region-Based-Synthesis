@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class TestManager
 {
-    private static ArrayList<Class> testClasses = new ArrayList<Class>();
-    private static ArrayList<Class> missing = new ArrayList<Class>();
+    private static ArrayList<Class<?>> testClasses = new ArrayList<Class<?>>();
+    private static ArrayList<Class<?>> missing = new ArrayList<Class<?>>();
     private static final String FILE_TEST_STRING = "test.java";
     private static final String FILE_TYPE = ".java";
     private static final String EMPTY = "";
@@ -20,14 +20,15 @@ public class TestManager
     {
         File dir = new File(".\\test");
         findClasses(dir);
-        for(Class test : testClasses)
+        for(Class<?> test : testClasses)
         {
             JUnitCore.runClasses(test);
         }
-        for(Class missed : missing)
-        {
+        //TODO: come back to this
+        //for(Object missed : missing)
+        //{
             //System.out.println(missed);// this will most likely need to be change to a logger instead of system.out.println
-        }
+        //}
     }
     
       //uses recursion to find all files containing 'test' in the file name and ends in .class (may change to .java) 

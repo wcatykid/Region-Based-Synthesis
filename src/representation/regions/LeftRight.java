@@ -1,9 +1,8 @@
 package representation.regions;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import exceptions.DomainException;
 import representation.bounds.Bound;
-import utilities.Utilities;
 import representation.Point;
 
 public class LeftRight extends RegionBound implements Serializable

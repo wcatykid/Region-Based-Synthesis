@@ -242,7 +242,6 @@ public class PlanarGraphBuilder
      * @param fIndex -- the index of the function we are interested in
      * @return the set of all points for which function f intersects all other functions (Functions \setminus {f})
      */
-    @SuppressWarnings("unchecked")
     protected Vector<Point> collectIntersections(int fIndex)
     {
         //

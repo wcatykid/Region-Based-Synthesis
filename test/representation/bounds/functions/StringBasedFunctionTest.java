@@ -15,11 +15,11 @@ public class StringBasedFunctionTest
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
         testEvaluateAtPointByY(1);
-//        testEvaluateAtPoint(1);
-//        testTranslation(1);
-//        testStretching(1);
-//        testShrinking(1);
-//        testAll(1);
+        testEvaluateAtPoint(1);
+        testTranslation(1);
+        testStretching(1);
+        testShrinking(1);
+        testAll(1);
 
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }

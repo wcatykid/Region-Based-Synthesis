@@ -10,7 +10,8 @@ import template.TopBottomTemplate;
 public class TemplateGenerator
 {
     private static final TemplateRestriction H_RESTRICTION;
-    private static final TemplateRestriction V_RESTRICTION;
+    //TODO: come back to this
+    //private static final TemplateRestriction V_RESTRICTION;
     private static final TemplateRestriction DEGREE_1_RESTRICTION;
     private static final TemplateRestriction DEGREE_2_RESTRICTION;
     private static final TemplateRestriction DEGREE_3_RESTRICTION;
@@ -22,7 +23,7 @@ public class TemplateGenerator
     static
     {
         H_RESTRICTION = new TemplateRestriction(Bound.BoundT.HORIZONTAL_LINE, null, null);
-        V_RESTRICTION = new TemplateRestriction(Bound.BoundT.VERTICAL_LINE, null, null);
+        //V_RESTRICTION = new TemplateRestriction(Bound.BoundT.VERTICAL_LINE, null, null);
 
         DEGREE_1_RESTRICTION = new TemplateRestriction(Bound.BoundT.LINEAR, null, null);
         DEGREE_2_RESTRICTION = new TemplateRestriction(Bound.BoundT.PARABOLA, null, null);

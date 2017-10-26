@@ -21,7 +21,8 @@ public class PeekableScanner
     public PeekableScanner(String theFile, String delimiters)  throws FileNotFoundException
     {
     	File file = new File(theFile);
-        scan = new Scanner(file).useDelimiter(delimiters);
+        scan = new Scanner(file);
+        scan.useDelimiter(delimiters);
         next = scan.hasNext() ? scan.next() : null;
         scan.close();
     }

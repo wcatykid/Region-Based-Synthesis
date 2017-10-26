@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import exceptions.DomainException;
 import math.integral.DefiniteIntegral;
-import solver.area.AreaSolution;
 
 /**
  *  A solution to these problem types consists of integral expressions

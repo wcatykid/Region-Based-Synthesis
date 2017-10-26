@@ -1,18 +1,12 @@
 package math.analysis.intersection;
 
-import static org.junit.Assert.*;
-
 import java.util.Vector;
-
 import org.junit.Test;
-
 import math.analysis.intersection.Intersection;
-import math.external_interface.LocalMathematicaCasInterface;
 import representation.Point;
 import representation.bounds.functions.StringBasedFunction;
 import utilities.Assertions;
 import utilities.StringUtilities;
-import utilities.Utilities;
 
 public class IntersectionTester
 {

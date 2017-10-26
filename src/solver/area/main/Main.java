@@ -1,6 +1,6 @@
 package solver.area.main;
 
-import solver.area.parser.AreaProblemFileParser;
+//import solver.area.parser.AreaProblemFileParser;
 
 public class Main
 {
@@ -15,7 +15,7 @@ public class Main
         //
         // Read the files to acquire the area between curves problems
         //
-        AreaProblemFileParser parser = new AreaProblemFileParser(options.getProblemFiles());
+//        AreaProblemFileParser parser = new AreaProblemFileParser(options.getProblemFiles());
 //        parser.parse();
 //        Vector<TextbookAreaProblem> problems = parser.getProblems();
 

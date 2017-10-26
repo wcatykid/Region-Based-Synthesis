@@ -37,7 +37,8 @@ public class ComplexAreaSolverTest
         //
         // Solve the area between curve problem; the solution is internal to the aggregator object
         //
-        solver.solve(region);
+        solver.Solution s = solver.solve( region.getRegion() ) ;
+        region.setAreaProblemSolutionByX( s ) ;
         double result = region.getAreaProblemSolutionByX().evaluate();
 
         // Check answer
@@ -59,11 +60,12 @@ public class ComplexAreaSolverTest
         //
         // Solve the area between curve problem; the solution is internal to the aggregator object
         //
-        solver.solve(region);
+        solver.Solution s = solver.solve( region.getRegion() ) ;
+        region.setAreaProblemSolutionByX( s ) ;
         double result = region.getAreaProblemSolutionByX().evaluate();
 
         // Check answer
-        assert(Utilities.equalDoubles(result, 25.33333)); // 76 / 3
+        assert(Utilities.equalDoubles(result, 18.7494801)); // ADAM: Trusted Mathematica
         
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
     }
@@ -81,16 +83,13 @@ public class ComplexAreaSolverTest
         //
         // Solve the area between curve problem; the solution is internal to the aggregator object
         //
-        solver.solve(region);
+        solver.Solution s = solver.solve( region.getRegion() ) ;
+        region.setAreaProblemSolutionByX( s ) ;
         double result = region.getAreaProblemSolutionByX().evaluate();
 
         // Check answer
-        assert(Utilities.equalDoubles(result, 10)); // This is wrong...Too lazy to calculate 
+        assert(Utilities.equalDoubles(result, 35.23169)); // ADAM: Trusted Mathematica 
         
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
     }
-    
-    
-    
-    
 }

@@ -196,7 +196,7 @@ public class Inverses extends Analyzer
                 String theFunc = function.substring(function.indexOf("->") + 3);
 
                 // Rewrite the function to be in terms of x (not y)
-                //theFunc = theFunc.replaceAll("y", "x");
+                theFunc = theFunc.replaceAll("y", "x");
 
                 theFunctions.add(theFunc);
             }

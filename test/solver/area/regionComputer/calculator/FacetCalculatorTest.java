@@ -1,12 +1,6 @@
 package solver.area.regionComputer.calculator;
 
 import org.junit.Test;
-
-import solver.area.TextbookAreaProblem;
-import solver.area.parser.AreaProblemParserTest;
-import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;
-import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
-import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
 import utilities.StringUtilities;
 
 public class FacetCalculatorTest

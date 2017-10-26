@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import exceptions.RepresentationException;
 import representation.bounds.Bound;
-import utilities.Utilities;
 import representation.Point;
 
 public class VerticalLineSegment extends LineSegment implements Serializable

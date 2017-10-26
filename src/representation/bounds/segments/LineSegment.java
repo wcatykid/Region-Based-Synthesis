@@ -160,9 +160,16 @@ public class LineSegment extends Bound implements Serializable
     {
         return slope() + "(x - " + _bottomPt.getX() + ")" + _bottomPt.getY();
     }
+
     @Override
     public String toCompactLatexString()
     {
         return toFullMathematicaString();
+    }
+    
+    @Override
+    public double evaluateAtPointByY(double y)
+    {
+        throw new RuntimeException( "LineSegment.evaluateAtPointByY is not implemented yet!" ) ;
     }
 }

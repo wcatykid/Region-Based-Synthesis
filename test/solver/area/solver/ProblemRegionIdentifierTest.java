@@ -5,15 +5,12 @@ import java.util.Vector;
 
 import org.junit.Test;
 
-import facades.AggregatorGenerator;
 import representation.regions.Region;
-import solver.RegionProblemAggregator;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParserTest;
 import solver.area.regionComputer.RegionExtractor;
 import utilities.Assertions;
 import utilities.StringUtilities;
-import utilities.Utilities;
 
 public class ProblemRegionIdentifierTest
 {

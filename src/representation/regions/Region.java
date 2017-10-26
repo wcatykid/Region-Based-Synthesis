@@ -1,18 +1,16 @@
 package representation.regions;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
-
 import engine.region.Verifier;
 import exceptions.DomainException;
-import math.analysis.extrema.ExtremeValues;
 import representation.Point;
 import representation.bounds.Bound;
 import representation.bounds.functions.Domain;

@@ -13,7 +13,7 @@ public class AggregatorGenerator
      */
     private static RegionProblemAggregator generate(RegionTemplate template, Region region)
     {
-        assert(region.verify());
+        assert( region.verify() );
         
         return new RegionProblemAggregator(template, region);
     }

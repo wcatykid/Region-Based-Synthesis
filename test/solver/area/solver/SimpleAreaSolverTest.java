@@ -38,8 +38,9 @@ public class SimpleAreaSolverTest
         //
         // Solve the area between curve problem; the solution is internal to the aggregator object
         //
-        solver.solve(square);
-        double result = square.getAreaProblemSolutionByX().evaluate();
+        solver.Solution s = solver.solve( square.getRegion() ) ; 
+        square.setAreaProblemSolutionByX( s ) ;
+        double result = square.getAreaProblemSolutionByX().evaluate() ;
 
         // Check answer
         assert(Utilities.equalDoubles(result, 16));
@@ -60,7 +61,8 @@ public class SimpleAreaSolverTest
         //
         // Solve the area between curve problem; the solution is internal to the aggregator object
         //
-        solver.solve(rectangle);
+        solver.Solution s = solver.solve( rectangle.getRegion() ) ;
+        rectangle.setAreaProblemSolutionByX( s ) ;
         double result = rectangle.getAreaProblemSolutionByX().evaluate();
 
         // Check answer
@@ -86,7 +88,8 @@ public class SimpleAreaSolverTest
         //
         // Solve the area between curve problem; the solution is internal to the aggregator object
         //
-        solver.solve(region);
+        solver.Solution s = solver.solve( region.getRegion() ) ;
+        region.setAreaProblemSolutionByX( s ) ;
         double result = region.getAreaProblemSolutionByX().evaluate();
 
         // Check answer
@@ -112,7 +115,8 @@ public class SimpleAreaSolverTest
         //
         // Solve the area between curve problem; the solution is internal to the aggregator object
         //
-        solver.solve(region);
+        solver.Solution s = solver.solve( region.getRegion() ) ;
+        region.setAreaProblemSolutionByX( s ) ;
         double result = region.getAreaProblemSolutionByX().evaluate();
 
         // Check answer

@@ -1,12 +1,8 @@
 package main;
-import java.util.Vector;
 
-import engine.Instantiator;
-import representation.regions.Region;
-import solver.RegionProblemAggregator;
+import java.util.Vector;
 import frontend.Options;
 import frontend.OptionsFileParser;
-import frontend.TemplateFileParser;
 import template.RegionTemplate;
 
 public class Main
@@ -74,7 +70,11 @@ public class Main
         //
         // Instantiate the regions
         //
+        throw new RuntimeException( "Main.process has unresolved build problems!" ) ;
+
+/*
         Instantiator inst = new Instantiator(templates);
+
         Vector<RegionProblemAggregator> regions = inst.instantiate();
 
         //
@@ -96,11 +96,6 @@ public class Main
 
         for (RegionTemplate template : templates) 
         {
-            // Instantiate those templates
-            Instantiator instantiator = new Instantiator(template);
-
-            // Instantiate and add results to the 
-            Vector<Region> regions = instantiator.instantiate();
             instantiatedRegions.add(regions);
             flatInstantiatedRegions.addAll(regions);
 
@@ -118,6 +113,7 @@ public class Main
         // TBC: Emit the instantiations as problems
 
         return true;
+*/
     }
 
     //

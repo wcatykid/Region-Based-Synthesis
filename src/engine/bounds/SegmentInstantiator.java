@@ -4,6 +4,10 @@ import representation.bounds.Bound;
 import representation.bounds.segments.VerticalLineSegment;
 import representation.regions.LeftRight;
 import representation.regions.Region;
+import template.RegionTemplate;
+
+import java.util.Vector;
+
 import engine.Instantiable;
 import exceptions.RepresentationException;
 import globals.Constants;
@@ -45,8 +49,9 @@ public class SegmentInstantiator implements Instantiable
     public double findRightSealX(Region region) throws exceptions.OptionsException
     {
         // 1) Acquire the _right-most bound from both region.getTop() and region.getBottom()
-        Bound last_top = region.getTop().lastBound();
-        Bound last_bottom = region.getBottom().lastBound();
+    	//TODO: come back to this (these next two are declared but never used) 
+    	//Bound last_top = region.getTop().lastBound();
+        //Bound last_bottom = region.getBottom().lastBound();
 
         // 2) Find the _left point of the domain for each bound lb, lt
         Point _left_topDomain = region.getTop().acquireLeftBoundPoint(); 
@@ -164,5 +169,11 @@ public class SegmentInstantiator implements Instantiable
         }
         
         region.setRight(new LeftRight(line));
+    }
+
+    @Override
+    public Vector<Region> instantiate(Region region, RegionTemplate template)
+    {
+        throw new RuntimeException( "SegmentInstantiator.instantiate has unresolved build problems!" ) ;
     }
 }

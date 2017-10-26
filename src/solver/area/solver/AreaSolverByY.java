@@ -111,7 +111,7 @@ public class AreaSolverByY extends Solver
         //
         // Bookend the interior points with the left, right values of the region; the given points are interior
         //
-        Vector<Double> allXs = new Vector<Double>(xs);
+        Vector<Double> allXs = new Vector<Double>();
         allXs.add(0, region.leftX());
         allXs.add(region.rightX());
 
@@ -195,7 +195,7 @@ public class AreaSolverByY extends Solver
             //
             LeftRight right = null;
             // Special case of right simple region's right bound: copy original, otherwise, use vertical
-            if (x_index == xs.size()) right = (LeftRight)region.getRight().clone();
+            if (x_index + 1 == xs.size() - 1) right = (LeftRight)region.getRight().clone();
             else
             {
                 Point botPoint = new Point(right_x, bottomF.evaluateAtPoint(right_x));

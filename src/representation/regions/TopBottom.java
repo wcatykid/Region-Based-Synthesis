@@ -80,6 +80,11 @@ public class TopBottom extends RegionBound implements Serializable
         throw new DomainException("Given x-value (" + x + ") not in the domain");
     }
 
+    public int numberOfBounds()
+    {
+        return _bounds.size() ;
+    }
+    
     /**
      * @param x -- x-value
      * @return the first bound for which the given x is in the domain (that is not vertical)
@@ -239,7 +244,7 @@ public class TopBottom extends RegionBound implements Serializable
     //
     public Point acquireRightBoundPoint()
     {
-        double x = _bounds.get(_bounds.size() - 1).leftBoundX();
+        double x = _bounds.get(_bounds.size() - 1).rightBoundX();
         double fx = _bounds.get(_bounds.size() - 1).evaluateAtPoint(x);
 
         return new Point(x, fx);
@@ -256,7 +261,7 @@ public class TopBottom extends RegionBound implements Serializable
         Set<Double> xs = new HashSet<Double>();
         for (Bound bound : _bounds)
         {
-            xs.addAll(ExtremeValues.getInstance().exclusiveExtrema(bound));
+            xs.addAll(ExtremeValues.getInstance().extrema(bound));
         }
 
         // Sort and return
@@ -370,6 +375,4 @@ public class TopBottom extends RegionBound implements Serializable
 
         return s + "}";
     }
-
-
 }

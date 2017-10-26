@@ -194,7 +194,7 @@ public class RegionGenerator
         BoundedFunction bottom1 = new BoundedFunction(FunctionT.PARABOLA);
         bottom1.translate(2, 1);
         bottom1.reflectOverX();
-        bottom1.stretch(0.25, 1);
+        bottom1.stretch(-0.25, 1);
         bottom1.setDomain(0, 4);
 
         BoundedFunction bottom2 = new BoundedFunction(FunctionT.LINEAR);
@@ -261,7 +261,7 @@ public class RegionGenerator
         //
         BoundedFunction bottom1 = new BoundedFunction(FunctionT.COSINE);
         bottom1.translate(0.5, 0);
-        bottom1.stretch(0.5, 1);
+        bottom1.stretch(0.5, Math.PI);
         bottom1.setDomain(0, 5);
 
         BoundedFunction bottom2 = new BoundedFunction(FunctionT.HORIZONTAL_LINE);
@@ -269,7 +269,7 @@ public class RegionGenerator
         
         BoundedFunction bottom3 = new BoundedFunction(FunctionT.LINEAR);
         bottom3.translate(0, 63);
-        bottom3.stretch(9, 1);
+        bottom3.stretch(-9, 1);
         bottom3.setDomain(7, 9);
         
         //

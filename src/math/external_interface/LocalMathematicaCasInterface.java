@@ -1,13 +1,10 @@
 package math.external_interface;
 
 import java.math.BigDecimal;
-
 import com.wolfram.jlink.*;
-
 import globals.Constants;
 import representation.Point;
 import representation.bounds.functions.BoundedFunction;
-import utilities.Utilities;
 
 //
 // Implements a singleton pattern

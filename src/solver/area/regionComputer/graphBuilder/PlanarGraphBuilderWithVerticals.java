@@ -76,7 +76,6 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Vector<Point> constructVerticals(PlanarGraph<NodePointT, PlanarEdgeAnnotation> graph, double x)
     {
         //
@@ -125,7 +124,6 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
      * @return the set of all points for which function f intersects all other functions (Functions \setminus {f})
      *     This includes verticals
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected Vector<Point> collectIntersections(int fIndex)
     {

@@ -1,12 +1,8 @@
 package engine.region;
 
 import java.util.Vector;
-
 import engine.Instantiable;
-import representation.bounds.segments.LineSegment;
 import representation.regions.Region;
-import globals.Constants;
-import representation.Point;
 import template.RegionTemplate;
 
 public class LeftInstantiator implements  Instantiable
@@ -17,6 +13,9 @@ public class LeftInstantiator implements  Instantiable
     //
     public Vector<Region> instantiate(RegionTemplate theTemplate)
     {
+        throw new RuntimeException( "LeftInstantiator.instantiate has unresolved build problems!" ) ;
+
+/*      
         Region region = new Region();
 
         // Begin with the origin as the bottom-left point by default
@@ -39,5 +38,12 @@ public class LeftInstantiator implements  Instantiable
         }
 
         return workingRegion;
+*/    
+    }
+
+    @Override
+    public Vector<Region> instantiate(Region region, RegionTemplate template)
+    {
+        throw new RuntimeException( "LeftInstantiator.instantiate is not implemented yet!" ) ;
     }
 }

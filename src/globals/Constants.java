@@ -54,7 +54,7 @@ public final class Constants
 	public static boolean ALLOW_INTERSECTIONS = false;
 
     // Path for Mathematica
-    public static String MATHEMATICA_PATH = "C:\\Program Files\\Wolfram Research\\Mathematica\\10.4\\MathKernel.exe";
+    public static String MATHEMATICA_PATH = "C:\\Program Files\\Wolfram Research\\Mathematica\\11.2\\MathKernel.exe";
 
     // Whether top / bottom functions must begin and end on same x-values
     public static boolean ENFORCE_FUNCTION_BOUND_ALIGNMENT = false;

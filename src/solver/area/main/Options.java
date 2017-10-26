@@ -2,8 +2,6 @@ package solver.area.main;
 
 import java.util.Vector;
 
-import globals.Constants;
-
 //
 // A aggregation class for options specified in the command-line
 //

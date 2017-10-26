@@ -3,14 +3,9 @@ package engine.region;
 import java.util.Vector;
 
 import engine.Instantiable;
-import engine.instantiator.bounds.generator.BoundGenerator;
-import exceptions.InstantiationException;
 import frontend.Options;
-import globals.Constants;
 import representation.Point;
 import representation.bounds.Bound;
-import representation.bounds.functions.BoundedFunction;
-import representation.bounds.functions.FunctionT;
 import representation.regions.Region;
 import representation.regions.TopBottom;
 import template.RegionTemplate;
@@ -147,7 +142,7 @@ public class TopBottomInstantiator implements Instantiable
 			if (Options.DEBUG) { System.out.println("Considering bottom function type: " + type); }
 			
 			// For each new 'appendable' function, create a copy of the region and append this new function 
-			for (Bound bound : instantiateBound(startPoint, region, type))
+			for (Bound bound : instantiateBound(startPoint, region.getBottom(), type))
 			{
 				Region copy = region.clone();
 
@@ -173,35 +168,38 @@ public class TopBottomInstantiator implements Instantiable
         // Special Case: Vertical Line
         if (type == Bound.BoundT.VERTICAL_LINE)
         {
-            bounds.addAll(BoundGenerator.getInstance().instantiateVertical(pt, other));
+        	//TODO: come back to this
+            //bounds.addAll(BoundGenerator.getInstance().instantiateVertical(pt, other));
         }
         else if (type == Bound.BoundT.HORIZONTAL_LINE)
         {
-            bounds.add(BoundGenerator.getInstance().instantiateHorizontal(pt, other));
+        	//TODO: come back to this
+        	//bounds.add(BoundGenerator.getInstance().instantiateHorizontal(pt, other));
         }
         else
         {
-            // This does not re-generate functions....needs to check the (other) Top/Bottom bound
-            bounds.addAll(BoundGenerator.getInstance().generateAll(type, pt));
+        	//TODO: come back to this
+        	// This does not re-generate functions....needs to check the (other) Top/Bottom bound
+        	////bounds.addAll(BoundGenerator.getInstance().generateAll(type, pt));
         }
+        
+        return bounds ;
     }
-   
-    
-    
+
 	/**
 	 * @param pt -- a left bound to attach the new function to (on the left)
 	 * @param other -- the top (or bottom
 	 * @param type -- The type of bound we are attempting to append
 	 * @return set of allowable functions that start at (pt) and do not intersect the (other) bound at all
 	 */
-	private Vector<Bound> instantiateBound(Point pt, TopBottom other, Bound.BoundT type)
-	{
-	    Vector<BoundedFunction>
-		// HERE:
-		//  For each version of the function (reflected, stretched, etc.)
-		//     Morph function so that it does not intersect the (other) set of bounds (within a reasonable tolerance)
-		//
-	}
+	//private Vector<Bound> instantiateBound(Point pt, TopBottom other, Bound.BoundT type)
+	//{
+	//    Vector<BoundedFunction>
+	//	// HERE:
+	//	//  For each version of the function (reflected, stretched, etc.)
+	//	//     Morph function so that it does not intersect the (other) set of bounds (within a reasonable tolerance)
+	//	//
+	//}
 
 	//
 	//
@@ -264,27 +262,6 @@ public class TopBottomInstantiator implements Instantiable
 //		return regions;
 //	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	//
 	// We construct the top / bottom in parallel:
 	//    That is,
@@ -306,7 +283,10 @@ public class TopBottomInstantiator implements Instantiable
 	//
 	public Vector<Region> constructTopBottom(RegionTemplate theTemplate, Region parentRegion)
 	{
-		// The set of regions, we continue to build
+        throw new RuntimeException( "TopBottomInstantiator.constructTopBottom has unresolved build problems!" ) ;
+
+/*
+        // The set of regions, we continue to build
 		Vector<Region> regions = new Vector<>();
 
 		// Default construction begins with the parent region
@@ -355,15 +335,19 @@ public class TopBottomInstantiator implements Instantiable
 		// Check to see if we're done with bottom and / or top
 		//
 		bottomComplete
+*/
 	}
 
 	//
 	// Takes the input set of regions and adds a top function to each.
 	// Returns that new set of regions (with new top)
 	//
+/*
 	public Vector<Region> constructTop(RegionTemplate theTemplate, Vector<Region> regions)
 	{
-		Vector<Region> regionsWithTops = new Vector<Region>();
+        throw new RuntimeException( "TopBottomInstantiator.constructTop has unresolved build problems!" ) ;
+
+        Vector<Region> regionsWithTops = new Vector<Region>();
 
 		for (Region region : regions)
 		{
@@ -372,149 +356,64 @@ public class TopBottomInstantiator implements Instantiable
 
 		return regionsWithTops;
 	}
-
+*/
 
 	//
 	// Given a new region, add a top function.
 	// That is, for each region, add all possible top functions increasing the number of regions exponentially.
 	//
-	private void generateSingleTop(RegionTemplate theTemplate, Region parent)
-	{
-		//
-		// Check to see if we are adding a top when we shouldn't
-		//
-		if (parent.top().length() + 1 >= parent.top().length())
-		{
-			throw new InstantiationException("Attempting to add a top function when a seal is required.");
-		}
+/*
+    private void generateSingleBottom(RegionTemplate theTemplate, Vector<Region> regions, Region workingRegion)
+    {
+        int currentBoundsInBottom = workingRegion.bottomLength();
+    
+    	if (currentBoundsInBottom < 0) currentBoundsInBottom = 0;
+    
+    	if (theTemplate.bottom.templateBounds.get(currentBoundsInBottom) != Bound.BoundT.VERTICAL_LINE)
+    	{
+    
+    		// If the template doesn't specify a function
+    		if (theTemplate.bottom.templateBounds.get(currentBoundsInBottom) == Bound.BoundT.FUNCTION)
+    		{
+    			for (int i = 0; i < (Constants.LIMITED_FUNCTIONS ? Constants.ALLOWED_FUNCTIONS.length : FunctionT.values().length); i++)
+    			{
+    				Region temp = workingRegion.clone();
+    				tempWorkingRegions.add(temp);
+    			}
+    
+    			for (int i = 0; i < tempWorkingRegions.size(); i++) {
+    				Region tempWorkingRegion = tempWorkingRegions.get(i);
+    
+    				FunctionT function;
+    				if (Constants.LIMITED_FUNCTIONS) {
+    					function = Constants.ALLOWED_FUNCTIONS[i];
+    				} else {
+    					function = FunctionT.values()[i];
+    				}
+    				BoundedFunction bottom = generateFunction(true, tempWorkingRegion, function);
+    				tempWorkingRegion.bottom.addBound(bottom);
+    			}
+    		}
+    		else
+    		{
+    			System.out.println("Generating a specific function!" );
+    			//If the template has a specific function
+    			if (tempWorkingRegions.isEmpty()) tempWorkingRegions.add(workingRegion.clone());
+    			Region tempWorkingRegion = tempWorkingRegions.lastElement();
+    
+    			Bound.BoundT boundT = theTemplate.bottom.templateBounds.get(currentBoundsInBottom);
+    
+    			BoundedFunction bottom = generateFunction(true, tempWorkingRegion, boundT.inFunctionTForm());
+    			tempWorkingRegion.bottom.addBound(bottom);
+    		}
+    	}
+    	else
+    	{
+    		//Generate vertical line
+    	}
+    }
+*/
 
-		//
-		// Determine the specific type of top bound is required.
-		//
-		Bound.BoundT functionBoundType = theTemplate.
-
-
-				//
-				// For each function type, add a top.
-				//
-				for ()
-				{
-				}
-
-
-	}
-
-	int currentBoundsInTop = workingRegion.top.length();
-	if (theTemplate.top.templateBounds.get(currentBoundsInTop) != Bound.BoundT.VERTICAL_LINE){
-
-		if (theTemplate.top.templateBounds.get(currentBoundsInTop) == Bound.BoundT.FUNCTION) {
-
-
-			int tempWorkingRegionsLength = tempWorkingRegions.size();
-			if (tempWorkingRegionsLength < 1) tempWorkingRegionsLength = 1;
-			for (int i = 0; i < (LIMITED_FUNCTIONS ? ALLOWED_FUNCTIONS.length : FunctionT.values().length); i++) {
-				if (tempWorkingRegionsLength == 1) 
-					topTempWorkingRegions.add(workingRegion.clone());
-				else {
-					for (int j = 0; j < tempWorkingRegionsLength; j++){
-						topTempWorkingRegions.add(tempWorkingRegions.get(j).clone());
-					}
-				}
-			}
-
-			for (int i = 0; i < topTempWorkingRegions.size(); i++) {
-				Region tempWorkingRegion = topTempWorkingRegions.get(i);
-
-				BoundedFunction top = null;
-				FunctionT function;
-				if (Constants.LIMITED_FUNCTIONS) {
-					function = Constants.ALLOWED_FUNCTIONS[i / Constants.ALLOWED_FUNCTIONS.length];
-				} else {
-					function = FunctionT.values()[i / FunctionT.values().length];
-				}
-
-				top = generateFunction(false, tempWorkingRegion, function);
-
-				//Make sure the function works in the situation.
-				if (!flipFunction(top, tempWorkingRegion))
-					break;
-
-				tempWorkingRegion.top.addBound(top);
-			} 
-		} else {
-			//Specified Function
-			System.out.println("Generating a specific top function!" );
-			//If the template has a specific function
-			if (topTempWorkingRegions.isEmpty()) {
-				for (Region region : tempWorkingRegions) {
-					topTempWorkingRegions.add(region.clone());
-				}
-			}
-
-			for (Region region : topTempWorkingRegions) {
-				Bound.BoundT boundT = theTemplate.top.templateBounds.get(currentBoundsInTop);
-
-				BoundedFunction top = generateFunction(false, region, boundT.inFunctionTForm());
-				//Make sure the function works in the situation.
-				if (!flipFunction(top, region))
-					break;
-				region.top.addBound(top);
-			}
-		}
-	} else {
-		//Vertical Line
-	}
-
-}
-
-private void generateSingleBottom(RegionTemplate theTemplate, Vector<Region> regions, Region workingRegion)
-{
-	int currentBoundsInBottom = workingRegion.bottomLength();
-
-	if (currentBoundsInBottom < 0) currentBoundsInBottom = 0;
-
-	if (theTemplate.bottom.templateBounds.get(currentBoundsInBottom) != Bound.BoundT.VERTICAL_LINE)
-	{
-
-		// If the template doesn't specify a function
-		if (theTemplate.bottom.templateBounds.get(currentBoundsInBottom) == Bound.BoundT.FUNCTION)
-		{
-			for (int i = 0; i < (Constants.LIMITED_FUNCTIONS ? Constants.ALLOWED_FUNCTIONS.length : FunctionT.values().length); i++)
-			{
-				Region temp = workingRegion.clone();
-				tempWorkingRegions.add(temp);
-			}
-
-			for (int i = 0; i < tempWorkingRegions.size(); i++) {
-				Region tempWorkingRegion = tempWorkingRegions.get(i);
-
-				FunctionT function;
-				if (Constants.LIMITED_FUNCTIONS) {
-					function = Constants.ALLOWED_FUNCTIONS[i];
-				} else {
-					function = FunctionT.values()[i];
-				}
-				BoundedFunction bottom = generateFunction(true, tempWorkingRegion, function);
-				tempWorkingRegion.bottom.addBound(bottom);
-			}
-		}
-		else
-		{
-			System.out.println("Generating a specific function!" );
-			//If the template has a specific function
-			if (tempWorkingRegions.isEmpty()) tempWorkingRegions.add(workingRegion.clone());
-			Region tempWorkingRegion = tempWorkingRegions.lastElement();
-
-			Bound.BoundT boundT = theTemplate.bottom.templateBounds.get(currentBoundsInBottom);
-
-			BoundedFunction bottom = generateFunction(true, tempWorkingRegion, boundT.inFunctionTForm());
-			tempWorkingRegion.bottom.addBound(bottom);
-		}
-	}
-	else
-	{
-		//Generate vertical line
-	}
 }
 
 
@@ -559,4 +458,4 @@ private void generateSingleBottom(RegionTemplate theTemplate, Vector<Region> reg
 //        }*/
 //    return regions;
 //}
-}
+

@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import representation.Point;
 import representation.bounds.Bound;
-import representation.bounds.Bound.BoundT;
 import utilities.Utilities;
 
 public class BoundedFunction extends Bound implements Serializable 
@@ -190,7 +189,12 @@ public class BoundedFunction extends Bound implements Serializable
     @Override
     public Bound inverse()
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new RuntimeException( "BoundedFunction.inverse is not implemented yet!" ) ;
+    }
+
+    @Override
+    public double evaluateAtPointByY(double y)
+    {
+        throw new RuntimeException( "BoundedFunction.evaluateAtPointByY is not implemented yet!" ) ;
     }
 }

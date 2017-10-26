@@ -4,12 +4,12 @@ public class Assertions
 {
     public static void Assert(double a, double b)
     {
-        if (!Utilities.equalDoubles(a, b))
+        if (!Utilities.looseEqualDoubles(a, b))
         {
             System.out.print("Discrepancy:");
             System.out.println("\t" + a + " != " + b);
         }
-        assert(Utilities.equalDoubles(a, b));
+        assert(Utilities.looseEqualDoubles(a, b));
     }
     
     public static void Assert(boolean left, boolean right)

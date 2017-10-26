@@ -83,19 +83,19 @@ public class SolverInterface
         double computedAnswerX = byX.evaluate();
         double computedAnswerY = byY.evaluate();
         
-        if (!Utilities.equalDoubles(computedAnswerX,  problem.getAnswer()))
+        if (!Utilities.looseEqualDoubles(computedAnswerX,  problem.getAnswer()))
         {
             System.err.println("Expected computed answer to equate to real answer; did not: computed(" +
                                computedAnswerX + ") Expected (" + problem.getAnswer() + ")");
         }
         
-        if (!Utilities.equalDoubles(computedAnswerY,  problem.getAnswer()))
+        if (!Utilities.looseEqualDoubles(computedAnswerY,  problem.getAnswer()))
         {
             System.err.println("Expected computed answer to equate to real answer; did not: computed(" +
                                computedAnswerY + ") Expected (" + problem.getAnswer() + ")");
         }
         
-        if (!Utilities.equalDoubles(computedAnswerY,  computedAnswerY))
+        if (!Utilities.looseEqualDoubles(computedAnswerX,  computedAnswerY))
         {
             System.err.println("Solution by X and Y do not equate (" +
                                computedAnswerX + ") vs. (" + computedAnswerY + ")");

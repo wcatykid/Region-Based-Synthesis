@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
 import exceptions.ParseException;
-import frontend.Options;
-import representation.bounds.functions.Domain;
 import solver.area.TextbookAreaProblem;
 
 /**

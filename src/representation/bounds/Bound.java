@@ -1,9 +1,8 @@
 package representation.bounds;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import exceptions.DomainException;
 import representation.Point;
-import representation.bounds.functions.BoundedFunction;
 import representation.bounds.functions.Domain;
 import representation.bounds.functions.FunctionT;
 import utilities.Utilities;

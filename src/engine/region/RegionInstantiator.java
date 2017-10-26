@@ -1,35 +1,35 @@
 package engine.region;
 
 import java.util.Vector;
-
 import engine.Instantiable;
-import representation.bounds.Bound;
-import representation.bounds.functions.BoundedFunction;
-import representation.bounds.functions.FunctionT;
 import representation.regions.Region;
-import representation.Point;
 import template.RegionTemplate;
 import utilities.logger.LoggerFactory;
 
 public class RegionInstantiator implements Instantiable
 {
-    private static final LeftInstantiator _LEFT_INSTANTIATOR;
-    private static final TopBottomInstantiator _TOP_BOTTOM_INSTANTIATOR;
-    private static final RightInstantiator _RIGHT_INSTANTIATOR;
+	//TODO: come back to this whole class
 
-    static
-    {
-        _LEFT_INSTANTIATOR = new LeftInstantiator();
-        _TOP_BOTTOM_INSTANTIATOR = new TopBottomInstantiator();
-        _RIGHT_INSTANTIATOR = new RightInstantiator();
-    }
+    //private static final LeftInstantiator _LEFT_INSTANTIATOR;
+    //private static final TopBottomInstantiator _TOP_BOTTOM_INSTANTIATOR;
+    //private static final RightInstantiator _RIGHT_INSTANTIATOR;
+
+    //static
+    //{
+    //    _LEFT_INSTANTIATOR = new LeftInstantiator();
+    //    _TOP_BOTTOM_INSTANTIATOR = new TopBottomInstantiator();
+    //    _RIGHT_INSTANTIATOR = new RightInstantiator();
+    //}
 
     //
     // Main instantiation routine for region synthesis; given a template, generate all regions
     //
     public Vector<Region> instantiate(RegionTemplate template)
     {
-    	//
+        throw new RuntimeException( "RegionInstantiator.instantiate has unresolved build problems!" ) ;
+
+/*      
+        //
         // Left side instantiation
         // Two options: 
     	//    Point:                *
@@ -54,7 +54,9 @@ public class RegionInstantiator implements Instantiable
     	//                          |
     	//                          |_________*_________*________
     	//
+
         Vector<Region> unclosed = new Vector<Region>();
+
         for (Region region : leftCompleteRegions)
         {
             unclosed.addAll( _TOP_BOTTOM_INSTANTIATOR.instantiate(template, region).constructTopBottom(region, template));
@@ -80,6 +82,7 @@ public class RegionInstantiator implements Instantiable
         Vector<Region> verified = verify(sealed);
         
         return verified;
+*/
     }
    
     /**
@@ -101,6 +104,12 @@ public class RegionInstantiator implements Instantiable
     	}
     	
     	return verified;
+    }
+
+    @Override
+    public Vector<Region> instantiate(Region region, RegionTemplate template)
+    {
+        throw new RuntimeException( "RegionInstantiator.instantiate is not implemented yet!" ) ;
     }
 }
 

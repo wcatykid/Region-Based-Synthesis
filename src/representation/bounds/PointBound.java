@@ -1,10 +1,7 @@
 package representation.bounds;
 
 import java.io.Serializable;
-
-import exceptions.RepresentationException;
 import representation.Point;
-import representation.bounds.segments.HorizontalLineSegment;
 
 public class PointBound extends Bound implements Serializable
 {
@@ -69,20 +66,25 @@ public class PointBound extends Bound implements Serializable
 	    return !equals(obj);
     }
 
+//  public Point getLeftTopPoint() {return _point; }
+//  public Point getLeftBottomPoint() {return _point; }
+
     @Override
     public String toFullMathematicaString()
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new RuntimeException( "PointBound.toFullMathematicaString is not implemented yet!" ) ;
     }
 
     @Override
     public String toCompactLatexString()
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new RuntimeException( "PointBound.toCompactLatexString is not implemented yet!" ) ;
     }
 
-//    public Point getLeftTopPoint() {return _point; }
-//    public Point getLeftBottomPoint() {return _point; }
+    @Override
+    public double evaluateAtPointByY(double y)
+    {
+        throw new RuntimeException( "PointBound.evaluateAtPointByY is not implemented yet!" ) ;
+    }
+
 }

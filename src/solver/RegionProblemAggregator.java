@@ -1,7 +1,6 @@
 package solver;
 
 import representation.regions.Region;
-import solver.area.AreaSolution;
 import template.RegionTemplate;
 
 //
@@ -21,9 +20,9 @@ public class RegionProblemAggregator
     public Region getRegion() { return _region; }
     
     // Area Problem(s)
-    protected AreaSolution _wrtX;
-    public void setAreaProblemSolutionByX(AreaSolution solution) { _wrtX = solution; }
-    public AreaSolution getAreaProblemSolutionByX() { return _wrtX; }
+    protected Solution _wrtX;
+    public void setAreaProblemSolutionByX(Solution solution) { _wrtX = solution; }
+    public Solution getAreaProblemSolutionByX() { return _wrtX; }
     
     // Volume Problem(s)
 
