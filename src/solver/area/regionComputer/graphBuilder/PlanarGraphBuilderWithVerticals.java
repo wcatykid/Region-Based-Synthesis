@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import representation.Point;
+import representation.bounds.functions.Domain;
 import representation.bounds.functions.StringBasedFunction;
 import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
@@ -32,9 +33,9 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
     protected Vector<Vector<Point>> _verticalPoints;
     protected Vector<Double> _xForVerticals;
     
-    public PlanarGraphBuilderWithVerticals(StringBasedFunction[] functions, Vector<Double> xs)
+    public PlanarGraphBuilderWithVerticals(StringBasedFunction[] functions, Domain domain, Vector<Double> xs)
     {
-        super(functions);
+        super(functions, domain);
 
         _verticalPoints = new Vector<Vector<Point>>();
         for (int index = 0; index < xs.size(); index++)

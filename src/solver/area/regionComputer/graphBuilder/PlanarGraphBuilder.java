@@ -107,7 +107,7 @@ public class PlanarGraphBuilder
             Vector<Double> xs = new Vector<Double>();
             xs.add(_domain.getLowerBound());
             xs.add(_domain.getUpperBound());
-            builder = new PlanarGraphBuilderWithVerticals(_functions, xs);
+            builder = new PlanarGraphBuilderWithVerticals(_functions, _domain, xs);
         }
 
         PlanarGraph<NodePointT, PlanarEdgeAnnotation> graph = builder.build();
@@ -210,8 +210,8 @@ public class PlanarGraphBuilder
                     double upperX = UPPERBOUND_X;
                     if (_domain != null)
                     {
-                        if (_domain.getLowerBound() < LOWERBOUND_X) lowerX = _domain.getLowerBound();
-                        if (_domain.getUpperBound() > UPPERBOUND_X) upperX = _domain.getUpperBound();
+                        if (_domain.getLowerBound() > LOWERBOUND_X) lowerX = _domain.getLowerBound();
+                        if (_domain.getUpperBound() < UPPERBOUND_X) upperX = _domain.getUpperBound();
                     }
                     Vector<Point> intersections = Intersection.getInstance().allIntersections(_functions[f], _functions[g], lowerX, upperX);
 

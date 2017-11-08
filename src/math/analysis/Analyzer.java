@@ -1,10 +1,8 @@
 package math.analysis;
 
 import java.util.Vector;
-
 import representation.Point;
 import representation.bounds.Bound;
-import representation.bounds.functions.BoundedFunction;
 
 /**
  * Base Class for front-end CAS Analysis
@@ -59,7 +57,7 @@ public abstract class Analyzer
         
 //        System.out.println("Values: " + values);
         
-        String[] points = values.split("[{]|[}]");
+        String[] points = values.split("[{]|[}]|,");
         
         //
         // Parse the individual points: x -> 0
@@ -67,15 +65,20 @@ public abstract class Analyzer
         Vector<Double> xs = new Vector<Double>();
         for (String point : points)
         {
+        	String p = point.trim();
 //            System.out.print(point + "?");
 
             // Avoid garbage
-            if (point.length() > 5 && point.charAt(0) == 'x')
+            if (p.length() > 5 && p.charAt(0) == 'x')
             {
                 // Take |x -> things| and extract: |things|
-                String x_value = point.substring(point.indexOf("->") + 3);
+                String x_value = p.substring( p.indexOf("->") + 3) ;
                 
                 xs.add(Double.parseDouble(x_value));
+            }
+            else if( p.length() > 0 )
+            {
+                xs.add(Double.parseDouble(p));
             }
         }
         
