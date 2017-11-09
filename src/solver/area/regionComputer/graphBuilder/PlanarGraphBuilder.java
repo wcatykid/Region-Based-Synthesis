@@ -157,7 +157,7 @@ public class PlanarGraphBuilder
                 // Midpoint
                 //
                 double midX = Utilities.midpoint(leftPt.getX(),  rightPt.getX());
-                double midY = _functions[f].evaluateAtPoint(midX);
+                double midY = _functions[f].evaluateAtPoint(midX).RealPart;
                 PlanarGraphPoint midGrPt = new PlanarGraphPoint(_functions[f].getFunction() + pointCount++, midX, midY);
                 graph.addNode(midGrPt, NodePointT.MIDPOINT);
 

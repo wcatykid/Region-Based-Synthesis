@@ -1,6 +1,8 @@
 package representation.bounds;
 
 import java.io.Serializable;
+
+import representation.ComplexNumber;
 import representation.Point;
 
 public class PointBound extends Bound implements Serializable
@@ -31,7 +33,13 @@ public class PointBound extends Bound implements Serializable
     //
     // Evaluating f(x)
     //
-    public double evaluateAtPoint(double x) { return this._point.getY(); }
+    public ComplexNumber evaluateAtPoint(double x)
+    {
+    	ComplexNumber output = new ComplexNumber() ;
+    	output.RealPart = this._point.getY() ; 
+    	return output ;
+    }
+    
     @Override public boolean isPoint() { return true; }
     @Override public Point getMinimum() { return _point; }
     @Override public Point getMaximum() { return _point; }
@@ -82,7 +90,7 @@ public class PointBound extends Bound implements Serializable
     }
 
     @Override
-    public double evaluateAtPointByY(double y)
+    public ComplexNumber evaluateAtPointByY(double y)
     {
         throw new RuntimeException( "PointBound.evaluateAtPointByY is not implemented yet!" ) ;
     }

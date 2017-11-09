@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import exceptions.RepresentationException;
 import representation.bounds.Bound;
+import representation.ComplexNumber;
 import representation.Point;
 
 public class VerticalLineSegment extends LineSegment implements Serializable
@@ -35,7 +36,13 @@ public class VerticalLineSegment extends LineSegment implements Serializable
     //
     // Evaluating f(x) = y
     //
-    @Override public double evaluateAtPoint(double x) { return Double.NEGATIVE_INFINITY; }
+    @Override public ComplexNumber evaluateAtPoint(double x)
+    {
+    	ComplexNumber output = new ComplexNumber() ;
+    	output.RealPart = Double.NEGATIVE_INFINITY ;
+    	return output ;
+    }
+    
     @Override public boolean isVertical() { return true; }
     @Override public Point getMinimum() { return _bottomPt; }
     @Override public Point getMaximum() { return _topPt; }
@@ -43,9 +50,11 @@ public class VerticalLineSegment extends LineSegment implements Serializable
     //
     // Evaluating x = f(y)
     //
-    public double evaluateAtPointByY(double x)
+    public ComplexNumber evaluateAtPointByY(double x)
     {
-        return _bottomPt.getX();
+    	ComplexNumber output = new ComplexNumber() ;
+    	output.RealPart = _bottomPt.getX() ;
+    	return output ;
     }
     
     /**

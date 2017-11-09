@@ -1,8 +1,8 @@
 package math.external_interface;
 
-import java.math.BigDecimal;
 import com.wolfram.jlink.*;
 import globals.Constants;
+import representation.ComplexNumber;
 import representation.Point;
 import representation.bounds.functions.BoundedFunction;
 
@@ -106,7 +106,7 @@ public class LocalMathematicaCasInterface extends CasInterface
      * @param q -- a String-based query for mathematica
      * @return the Mathematica result of the query; user is responsible for parsing
      */
-    public double queryDouble(String q)
+    public ComplexNumber queryComplexNumber(String q)
     {
         System.out.println("Query: \"" + q + "\"");
 
@@ -115,23 +115,11 @@ public class LocalMathematicaCasInterface extends CasInterface
         System.out.println("|" + result + "|");
 
         // In case we have a value such as: |1. - 0.000000000000000333066907387547 I|, remove the I component
-        result = ComplexNumberParser.simplify(result);
+        ComplexNumber cn = ComplexNumberParser.simplify(result);
         
-        System.out.println("|" + result + "|");
+        System.out.println("|" + cn + "|");
         
-        BigDecimal decimal = null;
-        
-        try
-        {
-            decimal = new BigDecimal(result.trim());
-        }
-        catch(NumberFormatException nfe)
-        {
-            System.err.println("Number format exception: " + nfe + " ; \"" + result + "\"");
-            return Double.NEGATIVE_INFINITY;
-        }
-
-        return decimal.doubleValue();
+        return cn ;
     }
 
     /**
@@ -143,7 +131,7 @@ public class LocalMathematicaCasInterface extends CasInterface
      *          q2: f[4]
      *          results in 16
      */
-    public double querySequence(String[] queries)
+    public ComplexNumber querySequence(String[] queries)
     {
         String overallQuery = "";
 
@@ -178,7 +166,7 @@ public class LocalMathematicaCasInterface extends CasInterface
 
         //System.err.println("Evaluating: " + overallQuery);
         
-        return queryDouble(overallQuery);
+        return queryComplexNumber(overallQuery);
     }
 
     /**
@@ -191,7 +179,7 @@ public class LocalMathematicaCasInterface extends CasInterface
      *          q2: f[4]
      *          results in 16
      */
-    public double evaluateAtPoint(String function, double x)
+    public ComplexNumber evaluateAtPoint(String function, double x)
     {
         final String fName = "fLocal";
 

@@ -92,8 +92,8 @@ public class Inverses extends Analyzer
         if (domain == null) return null;
 
         // Acquire (x1, f(x1)) and (x2, f(x2)) so the domain is (f(x1), f(x2))
-        double y1 = function.evaluateAtPoint(domain.getLowerBound());
-        double y2 = function.evaluateAtPoint(domain.getUpperBound());
+        double y1 = function.evaluateAtPoint(domain.getLowerBound()).RealPart;
+        double y2 = function.evaluateAtPoint(domain.getUpperBound()).RealPart;
 
         // Order the values
         if (y1 > y2)
@@ -274,15 +274,15 @@ public class Inverses extends Analyzer
         StringBasedFunction invFunction = new StringBasedFunction(inverse);
 
         // Check both endpoints of the domain
-        double y1 = function.evaluateAtPoint(domain.getLowerBound());
+        double y1 = function.evaluateAtPoint(domain.getLowerBound()).RealPart;
         if (!inverseSatisfies(invFunction, domain.getLowerBound(), y1)) return false;
 
-        double y2 = function.evaluateAtPoint(domain.getUpperBound());
+        double y2 = function.evaluateAtPoint(domain.getUpperBound()).RealPart;
         if (!inverseSatisfies(invFunction, domain.getUpperBound(), y2)) return false;
 
         // Check a midpoint (for safety)
         double midX = Utilities.midpoint(domain.getLowerBound(), domain.getUpperBound());
-        double midY = function.evaluateAtPoint(midX);
+        double midY = function.evaluateAtPoint(midX).RealPart;
         if (!inverseSatisfies(invFunction, midX, midY)) return false;
 
         return true;
@@ -290,7 +290,7 @@ public class Inverses extends Analyzer
 
     private boolean inverseSatisfies(StringBasedFunction inverse, double x, double y)
     {
-        return Utilities.looseEqualDoubles(inverse.evaluateAtPoint(y), x);
+        return Utilities.looseEqualDoubles(inverse.evaluateAtPoint(y).RealPart, x);
     }
     
     //    InputForm[Solve[y-x(x-1)(x+1) == 0, x]]            

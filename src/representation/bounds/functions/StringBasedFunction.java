@@ -2,6 +2,7 @@ package representation.bounds.functions;
 
 import math.analysis.inverses.Inverses;
 import math.external_interface.LocalMathematicaCasInterface;
+import representation.ComplexNumber;
 import representation.bounds.Bound;
 import utilities.Utilities;
 
@@ -146,7 +147,7 @@ public class StringBasedFunction extends BoundedFunction
      * @return f(x) for this function
      */
     @Override
-    public double evaluateAtPoint(double x)
+    public ComplexNumber evaluateAtPoint(double x)
     {
         return LocalMathematicaCasInterface.getInstance().evaluateAtPoint(getFunction(), x);
     }
@@ -155,7 +156,7 @@ public class StringBasedFunction extends BoundedFunction
      * @param y
      * @return x = f(y)  OR y = f^{-1}(x) assuming we have a 1-1 piece of a function
      */
-    public double evaluateAtPointByY(double y)
+    public ComplexNumber evaluateAtPointByY(double y)
     {
         StringBasedFunction inverse = (StringBasedFunction)inverse();
         

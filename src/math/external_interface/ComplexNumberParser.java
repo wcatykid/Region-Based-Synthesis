@@ -2,6 +2,7 @@ package math.external_interface;
 
 import java.math.BigDecimal;
 
+import representation.ComplexNumber;
 import utilities.Utilities;
 
 /**
@@ -22,15 +23,12 @@ public class ComplexNumberParser
      *      "1. - 0.000000000000000333066907387547 I" --> "1."
      *      "0.7937005259840998 - 0.000000000000000333066907387547 I" --> "0.7937005259840998"
      */
-    public static String simplify(String number)
+    public static ComplexNumber simplify(String number)
     {
-        String real = simplifyConstant(getRealPart(number));
-
-        String imag = simplifyConstant(getImaginaryPart(number));
-
-        if (imag.equals("0")) return real;
-
-        return "0"; //real + (imag < 0 ? " - " : " + ") + imag + " I";
+    	ComplexNumber output = new ComplexNumber() ;
+        output.RealPart = simplifyConstant(getRealPart(number));
+        output.ImaginaryPart = simplifyConstant(getImaginaryPart(number));
+        return output ;
     }
 
     /**
@@ -95,10 +93,10 @@ public class ComplexNumberParser
      *      "0.7937005259840998 - 0.000000000000000333066907387547 I" --> "0.7937005259840998"
      *      "1.6653345369377348*^-16" -> "0"
      */
-    private static String simplifyConstant(String number)
+    private static double simplifyConstant(String number)
     {
         // Check if we're dealing with 0 right away
-        if (number == "0") return number;
+        if (number == "0") return 0.0 ;
         
         //
         // Handle scientific form
@@ -121,10 +119,10 @@ public class ComplexNumberParser
             if (exp > 0)
             {
                 System.err.println("ComplexNumberParser::simplify: Positive exponent in scientific notation.");
-                return Double.toString(Double.MIN_VALUE);
+                return Double.MIN_VALUE ;
             }
             
-            return "0";
+            return 0.0 ;
         }
 
         //
@@ -134,8 +132,8 @@ public class ComplexNumberParser
         double doubleVal = bd.doubleValue();
         int integerVal = bd.intValue();
 
-        if (Utilities.equalDoubles(doubleVal - integerVal, 0)) return Integer.toString(integerVal);
+        if (Utilities.equalDoubles(doubleVal - integerVal, 0)) return integerVal ;
         
-        return number;
+        return doubleVal ;
     }
 }

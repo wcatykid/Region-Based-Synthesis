@@ -2,6 +2,7 @@ package representation.bounds.functions;
 
 import java.io.Serializable;
 
+import representation.ComplexNumber;
 import representation.Point;
 import representation.bounds.Bound;
 import utilities.Utilities;
@@ -181,9 +182,11 @@ public class BoundedFunction extends Bound implements Serializable
         return toFullMathematicaString() + _domain.toString();
     }
 
-    public double evaluateAtPoint(double x)
+    public ComplexNumber evaluateAtPoint(double x)
     {
-        return _fType.evaluate(a, b, h, k, x);
+    	ComplexNumber output = new ComplexNumber() ;
+    	output.RealPart = _fType.evaluate(a, b, h, k, x) ; 
+        return output ;
     }
 
     @Override
@@ -193,7 +196,7 @@ public class BoundedFunction extends Bound implements Serializable
     }
 
     @Override
-    public double evaluateAtPointByY(double y)
+    public ComplexNumber evaluateAtPointByY(double y)
     {
         throw new RuntimeException( "BoundedFunction.evaluateAtPointByY is not implemented yet!" ) ;
     }

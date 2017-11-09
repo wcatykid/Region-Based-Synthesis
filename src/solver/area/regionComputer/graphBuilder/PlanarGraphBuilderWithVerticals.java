@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import representation.ComplexNumber;
 import representation.Point;
 import representation.bounds.functions.Domain;
 import representation.bounds.functions.StringBasedFunction;
@@ -85,7 +86,9 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
         Set<Point> points = new HashSet<Point>();
         for (StringBasedFunction function : _functions)
         {
-            points.add(new Point(x, function.evaluateAtPoint(x)));
+        	ComplexNumber cn = function.evaluateAtPoint( x ) ;
+        	if( ! cn.hasImaginaryPart() )
+        		points.add( new Point( x, cn.RealPart ) ) ;
         }
 
         // If all functions intersect at that point, no need for further analysis
@@ -142,7 +145,9 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
         //
         for (Double x : _xForVerticals)
         {
-            pointSet.add(new Point(x, _functions[fIndex].evaluateAtPoint(x)));
+        	ComplexNumber cn = _functions[ fIndex ].evaluateAtPoint( x ) ;
+        	if( ! cn.hasImaginaryPart() )
+        		pointSet.add( new Point( x, cn.RealPart ) ) ;
         }
 
         //

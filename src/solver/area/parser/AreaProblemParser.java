@@ -97,8 +97,8 @@ public class AreaProblemParser
             domainStr = replaceConstants(domainStr);
             String[] bounds = domainStr.split(",");
 
-            left_x = LocalMathematicaCasInterface.getInstance().queryDouble(bounds[0]);
-            right_x = LocalMathematicaCasInterface.getInstance().queryDouble(bounds[1]); // Double.parseDouble(bounds[1])
+            left_x = LocalMathematicaCasInterface.getInstance().queryComplexNumber(bounds[0]).RealPart;
+            right_x = LocalMathematicaCasInterface.getInstance().queryComplexNumber(bounds[1]).RealPart; // Double.parseDouble(bounds[1])
         }
 
         // No domain was 
@@ -169,7 +169,7 @@ public class AreaProblemParser
         String answer = line.substring(beginAnswerIndex+1, endAnswerIndex);
         answer = replaceConstants(answer);
         
-        return LocalMathematicaCasInterface.getInstance().queryDouble(answer);
+        return LocalMathematicaCasInterface.getInstance().queryComplexNumber(answer).RealPart;
     }
     
     /**

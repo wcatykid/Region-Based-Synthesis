@@ -2,6 +2,7 @@ package representation.bounds;
 
 import java.io.Serializable;
 import exceptions.DomainException;
+import representation.ComplexNumber;
 import representation.Point;
 import representation.bounds.functions.Domain;
 import representation.bounds.functions.FunctionT;
@@ -35,13 +36,13 @@ public abstract class Bound implements Serializable
      * @param x
      * @return f(x)
      */
-    public abstract double evaluateAtPoint(double x);
+    public abstract ComplexNumber evaluateAtPoint(double x);
 
     /**
      * @param y
      * @return x = f(y)  OR y = f^{-1}(x) assuming we have a 1-1 piece of a function
      */
-    public abstract double evaluateAtPointByY(double y);
+    public abstract ComplexNumber evaluateAtPointByY(double y);
     
     public boolean isPoint() { return false; }
     public boolean isVertical() { return false; }
@@ -70,8 +71,8 @@ public abstract class Bound implements Serializable
     public boolean inRange(double y1, double y2)
     {
         // Acquire the range values
-        double lowRangeY = evaluateAtPoint(_domain.getLowerBound());
-        double upperRangeY = evaluateAtPoint(_domain.getUpperBound());
+        double lowRangeY = evaluateAtPoint(_domain.getLowerBound()).RealPart;
+        double upperRangeY = evaluateAtPoint(_domain.getUpperBound()).RealPart;
 
         // Check whether the given interval is within the range interval
         return inRange(y1, y2, lowRangeY, upperRangeY);
@@ -148,12 +149,12 @@ public abstract class Bound implements Serializable
         // Equate x-values first; then check y-values
         if (Utilities.equalDoubles(_domain.getLowerBound(), pt.getX()))
         {
-            double leftY = evaluateAtPoint(_domain.getLowerBound());
+            double leftY = evaluateAtPoint(_domain.getLowerBound()).RealPart;
             return Utilities.equalDoubles(leftY, pt.getY());
         }
         else if (Utilities.equalDoubles(_domain.getUpperBound(), pt.getX()))
         {
-            double rightY = evaluateAtPoint(_domain.getUpperBound());
+            double rightY = evaluateAtPoint(_domain.getUpperBound()).RealPart;
             return Utilities.equalDoubles(rightY, pt.getY());
         }
 

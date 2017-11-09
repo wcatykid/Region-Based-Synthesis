@@ -78,7 +78,7 @@ public class ExtremeValues extends Analyzer
         System.out.println("Query: |" + query + "|");
 
         // Query Mathematica
-        double result = LocalMathematicaCasInterface.getInstance().queryDouble(query);
+        double result = LocalMathematicaCasInterface.getInstance().queryComplexNumber(query).RealPart;
 
         System.out.println("Result: |" + result + "|");
 
@@ -112,7 +112,7 @@ public class ExtremeValues extends Analyzer
         System.out.println("Query: |" + query + "|");
 
         // Query Mathematica
-        double result = LocalMathematicaCasInterface.getInstance().queryDouble(query);
+        double result = LocalMathematicaCasInterface.getInstance().queryComplexNumber(query).RealPart;
 
         System.out.println("Result: |" + result + "|");
 

@@ -1,6 +1,7 @@
 package representation.bounds.functions;
 
 import exceptions.DomainException;
+import representation.ComplexNumber;
 
 /**
  * Represents a function-based subtraction: f(x) - g(x)
@@ -48,9 +49,9 @@ public class DifferenceBoundedFunction extends BoundedFunction
     public String toCompactLatexString() { return "(" + _left.toCompactLatexString() + ") - (" + _right.toCompactLatexString() + ")"; }
 
     @Override
-    public double evaluateAtPoint(double x)
+    public ComplexNumber evaluateAtPoint(double x)
     {
-        return _left.evaluateAtPoint(x) - _right.evaluateAtPoint(x);
+        return _left.evaluateAtPoint(x).subtract( _right.evaluateAtPoint(x) ) ;
     }
     
     @Override

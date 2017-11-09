@@ -36,7 +36,7 @@ public class LocalMathematicaCasInterfaceTest
 
         for (double x = -10; x < 10; x++)
         {
-            assert(Utilities.equalDoubles(LocalMathematicaCasInterface.getInstance().evaluateAtPoint(function, x), x * x + 1));
+            assert(Utilities.equalDoubles(LocalMathematicaCasInterface.getInstance().evaluateAtPoint(function, x).RealPart, x * x + 1));
         }
         
         //
@@ -46,7 +46,7 @@ public class LocalMathematicaCasInterfaceTest
 
         for (int x = -10; x < 10; x++)
         {
-            assert(Utilities.equalDoubles(LocalMathematicaCasInterface.getInstance().evaluateAtPoint(function, x), 0));
+            assert(Utilities.equalDoubles(LocalMathematicaCasInterface.getInstance().evaluateAtPoint(function, x).RealPart, 0));
         }
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));

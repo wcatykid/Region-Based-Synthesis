@@ -181,8 +181,8 @@ public class AreaSolverByY extends Solver
             if (x_index == 0) left = (LeftRight)region.getLeft().clone();
             else
             {
-                Point botPoint = new Point(left_x, bottomF.evaluateAtPoint(left_x));
-                Point topPoint = new Point(left_x, topF.evaluateAtPoint(left_x));
+                Point botPoint = new Point(left_x, bottomF.evaluateAtPoint(left_x).RealPart);
+                Point topPoint = new Point(left_x, topF.evaluateAtPoint(left_x).RealPart);
 
                 try
                 {
@@ -198,8 +198,8 @@ public class AreaSolverByY extends Solver
             if (x_index + 1 == xs.size() - 1) right = (LeftRight)region.getRight().clone();
             else
             {
-                Point botPoint = new Point(right_x, bottomF.evaluateAtPoint(right_x));
-                Point topPoint = new Point(right_x, topF.evaluateAtPoint(right_x));
+                Point botPoint = new Point(right_x, bottomF.evaluateAtPoint(right_x).RealPart);
+                Point topPoint = new Point(right_x, topF.evaluateAtPoint(right_x).RealPart);
 
                 try
                 {
@@ -318,8 +318,8 @@ public class AreaSolverByY extends Solver
             // Evaluate a midpoint to see which is smaller (establishing sides of the functions)
             //
             double midY = Utilities.midpoint(bottom.getY(), top.getY());
-            double firstX = bounds.getFirst().evaluateAtPointByY(midY);
-            double secondX = bounds.getSecond().evaluateAtPointByY(midY);
+            double firstX = bounds.getFirst().evaluateAtPointByY(midY).RealPart;
+            double secondX = bounds.getSecond().evaluateAtPointByY(midY).RealPart;
 
             Bound left = null;
             Bound right = null;

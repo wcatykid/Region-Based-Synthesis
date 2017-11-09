@@ -90,10 +90,10 @@ public class SegmentInstantiator implements Instantiable
         {
             // Check for proper closure; Proper closure is:
             //   double f1y = f1.evaluate(close_x))
-            double _top_Y = last_top.evaluateAtPoint(close_X); 
+            double _top_Y = last_top.evaluateAtPoint(close_X).RealPart; 
 
             //   double f2y = f2.evaluate(close_x))
-            double _bottom_Y = last_bottom.evaluateAtPoint(close_X);
+            double _bottom_Y = last_bottom.evaluateAtPoint(close_X).RealPart;
 
             // Save the x-value for later if one or both y-values are integer values
             if (firstValidSingleInt_X == -1)
@@ -152,8 +152,8 @@ public class SegmentInstantiator implements Instantiable
         Bound last_bottom = region.getBottom().lastBound();
 
         // Acquire y-values
-        double _top_Y = last_top.evaluateAtPoint(x); 
-        double _bottom_Y = last_bottom.evaluateAtPoint(x);
+        double _top_Y = last_top.evaluateAtPoint(x).RealPart; 
+        double _bottom_Y = last_bottom.evaluateAtPoint(x).RealPart;
         
         Point _topPt = new Point(x, _top_Y);
         Point _bottomPt = new Point(x, _bottom_Y);

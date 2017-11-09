@@ -4,6 +4,7 @@ import java.io.Serializable;
 import exceptions.DomainException;
 import exceptions.RepresentationException;
 import representation.bounds.Bound;
+import representation.ComplexNumber;
 import representation.Point;
 
 public class LineSegment extends Bound implements Serializable
@@ -89,9 +90,11 @@ public class LineSegment extends Bound implements Serializable
     //
     // y - y0 = m (x - x0)  ==>  y = m (x - x0) + y0
     //
-    public double evaluateAtPoint(double x)
+    public ComplexNumber evaluateAtPoint(double x)
     {
-        return slope() * (x - _bottomPt.getX()) + _bottomPt.getY();
+    	ComplexNumber output = new ComplexNumber() ;
+    	output.RealPart = slope() * (x - _bottomPt.getX()) + _bottomPt.getY() ; 
+        return output ;
     }
 
     //
@@ -168,7 +171,7 @@ public class LineSegment extends Bound implements Serializable
     }
     
     @Override
-    public double evaluateAtPointByY(double y)
+    public ComplexNumber evaluateAtPointByY(double y)
     {
         throw new RuntimeException( "LineSegment.evaluateAtPointByY is not implemented yet!" ) ;
     }
