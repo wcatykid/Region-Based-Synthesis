@@ -12,16 +12,16 @@ public class InversesTest
     @Test
     public void test()
     {
-        String testName = "Extreme Values Tests";
+        String testName = "Inverses Tests";
 
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
-        runInverse(1, "Sqrt[x]", 1, 5.0, "y^2");
-        runInverse(1, "x^2", 0, 5.0, "Sqrt[y]");
-        runInverse(1, "x^3", 0, 5.0, "y^(1/3)");
-        runInverse(1, "x^(1/3)", 0, 5.0, "y^3");
-        runInverse(1, "-x^3", 0, 1, "-((-1)^(2/3)*y^(1/3))");
-        runInverse(1, "-x^2", 0, 1, "(-I)*Sqrt[y]");
+        runInverse(1, "Sqrt[x]", 1, 5.0, "x^2");
+        runInverse(1, "x^2", 0, 5.0, "Sqrt[x]");
+        runInverse(1, "x^3", 0, 5.0, "x^(1/3)");
+        runInverse(1, "x^(1/3)", 0, 5.0, "x^3");
+        runInverse(1, "-x^3", 0, 1, "-((-1)^(2/3)*x^(1/3))");
+        runInverse(1, "-x^2", 0, 1, "(-I)*Sqrt[x]");
         
 //        runInverse(1, "(x-1)(x+1)(x^2-4)", -5.0, 5.0, -1.5811388300841898, 0.0, 1.5811388300841898);
 //        runInverse(1, "(x-1)(x+1)(x^2-4)", -1.0, 1.0, 0.0);

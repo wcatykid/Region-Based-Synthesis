@@ -25,5 +25,4 @@ public class ComplexNumber
 	{
 		return "ComplexNumber [ RealPart = " + RealPart + ", ImaginaryPart = " + ImaginaryPart + " ]" ;
 	}
-
 }

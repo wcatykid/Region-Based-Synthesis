@@ -32,13 +32,13 @@ public class PlanarGraphBuilderTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
-        runGraphVerification(indent + 1, "{ x^2 - 4x; 0 }                       // LH, Page 383 #7; Implied Domain", 4, 4);
-        runGraphVerification(indent + 1, "{ 3 - 2x - x^2; 0 }                   // LH, Page 383 #8; Implied Domain", 4, 4);
-        runGraphVerification(indent + 1, "{ x^2 + 2x + 1; 3x + 3 }              // LH, Page 383 #9; Implied Domain", 4, 4);
-        runGraphVerification(indent + 1, "{ Surd[x, 3] ; x }                    // LH, Page 383 #16; Implied Domain; 3 intersection points; Regions: 2", 7, 8);
-        runGraphVerification(indent + 1, "{ x ; 2 - x ; 0}                      // LH, Page 383 #11; Implied Domain with 3 functions", 6, 6);
-        runGraphVerification(indent + 1, "{ x ; 1/2 x - 4 ; 2 - x ; 0}          // Made up: 3 regions", 14, 16);
-        runGraphVerification(indent + 1, "{ x ; x - 1 ; 0}          // Parallel", 3, 2);
+        runGraphVerification(indent + 1, "{ x^2 - 4x; 0 }              // LH, Page 383 #7; Implied Domain", 4, 4);
+        runGraphVerification(indent + 1, "{ 3 - 2x - x^2; 0 }          // LH, Page 383 #8; Implied Domain", 4, 4);
+        runGraphVerification(indent + 1, "{ x^2 + 2x + 1; 3x + 3 }     // LH, Page 383 #9; Implied Domain", 4, 4);
+        runGraphVerification(indent + 1, "{ Surd[x, 3] ; x }           // LH, Page 383 #16; Implied Domain; 3 intersection points; Regions: 2", 7, 8);
+        runGraphVerification(indent + 1, "{ x ; 2 - x ; 0}             // LH, Page 383 #11; Implied Domain with 3 functions", 6, 6);
+        runGraphVerification(indent + 1, "{ x ; 1/2 x - 4 ; 2 - x ; 0} // Made up: 3 regions", 14, 16);
+        runGraphVerification(indent + 1, "{ x ; x - 1 ; 0}             // Parallel", 3, 2);
         //runGraphVerification(indent + 1, "{ x ; x - 1 ; x - 2 ; x - 3 ; 0 ; 1 ; 2 ; 3 }          // Larger Parallel; 9 regions", 40, 48);
         
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
@@ -50,13 +50,13 @@ public class PlanarGraphBuilderTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
-        runGraphVerification(indent + 1, "{ x^2 - 4x; 0 }        [1,3]          // LH, Page 383 #7; Domain results in verticals", 12, 14);
-        runGraphVerification(indent + 1, "{ 3 - 2x - x^2; 0 }    [-2,0]                 // LH, Page 383 #8; Implied Domain", 12, 14);
-        runGraphVerification(indent + 1, "{ x^2 - 4x; 0 }        [0,3]          // LH, Page 383 #7; Domain results in verticals on right only", 8, 9);
-        runGraphVerification(indent + 1, "{ x^2 - 4x; 0 }        [0,4]          // LH, Page 383 #7; Domain results in no verticals", 4, 4);
-        runGraphVerification(indent + 1, "{ x ; x - 1 ; 0 ; 1 }          // ", 8, 8);
-        runGraphVerification(indent + 1, "{ x ; x - 2 ; 0 ; 2 }   [0, 1]   // ", 20, 25);
-        runGraphVerification(indent + 1, "{ x ; 0 } [0,1]          // Parallel", 5, 5);
+        runGraphVerification(indent + 1, "{ x^2 - 4x; 0 }       [1,3]  // LH, Page 383 #7; Domain results in verticals", 6, 6);
+        runGraphVerification(indent + 1, "{ 3 - 2x - x^2; 0 }   [-2,0] // LH, Page 383 #8; Implied Domain", 6, 6);
+        runGraphVerification(indent + 1, "{ x^2 - 4x; 0 }       [0,3]  // LH, Page 383 #7; Domain results in verticals on right only", 5, 5);
+        runGraphVerification(indent + 1, "{ x^2 - 4x; 0 }       [0,4]  // LH, Page 383 #7; Domain results in no verticals", 4, 4);
+        runGraphVerification(indent + 1, "{ x ; x - 1 ; 0 ; 1 }        // ", 8, 8);
+        runGraphVerification(indent + 1, "{ x ; x - 2 ; 0 ; 2 } [0, 1] // ", 11, 13);
+        runGraphVerification(indent + 1, "{ x ; 0 }             [0,1]  // Parallel", 5, 5);
         
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }

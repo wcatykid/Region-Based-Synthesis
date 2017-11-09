@@ -47,9 +47,9 @@ public class RegionExtractorTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
-        runRegionVerification(indent + 1, "{ x ; x - 1 ; 0}          // Parallel", 0);
-        runRegionVerification(indent + 1, "{ x } [0,1]          // Parallel", 0);
-        runRegionVerification(indent + 1, "{ x ; x - 1 ; 0}          // Parallel", 0);
+        runRegionVerification(indent + 1, "{ x ; x - 1 ; 0}       // Parallel", 0);
+        runRegionVerification(indent + 1, "{ x }            [0,1] // Parallel", 0);
+        runRegionVerification(indent + 1, "{ x ; x - 1 ; 0}       // Parallel", 0);
 
 
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
@@ -61,12 +61,12 @@ public class RegionExtractorTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
-        runRegionVerification(indent + 1, "{ x^2 - 4x; 0 }                       // LH, Page 383 #7; Implied Domain", 1);
-        runRegionVerification(indent + 1, "{ 3 - 2x - x^2; 0 }                   // LH, Page 383 #8; Implied Domain", 1);
-        runRegionVerification(indent + 1, "{ x^2 + 2x + 1; 3x + 3 }              // LH, Page 383 #9; Implied Domain", 1);
-        runRegionVerification(indent + 1, "{ x ; 2 - x ; 0}                      // LH, Page 383 #11; Implied Domain with 3 functions", 1);
-        runRegionVerification(indent + 1, "{ x ; 0 } [0,1]          // Parallel", 1);
-        runRegionVerification(indent + 1, "{ -x^2 + 4 ; x^2 - 4 } //", 1);
+        runRegionVerification(indent + 1, "{ x^2 - 4x; 0 }                // LH, Page 383 #7; Implied Domain", 1);
+        runRegionVerification(indent + 1, "{ 3 - 2x - x^2; 0 }            // LH, Page 383 #8; Implied Domain", 1);
+        runRegionVerification(indent + 1, "{ x^2 + 2x + 1; 3x + 3 }       // LH, Page 383 #9; Implied Domain", 1);
+        runRegionVerification(indent + 1, "{ x ; 2 - x ; 0}               // LH, Page 383 #11; Implied Domain with 3 functions", 1);
+        runRegionVerification(indent + 1, "{ x ; 0 }                [0,1] // Parallel", 1);
+        runRegionVerification(indent + 1, "{ -x^2 + 4 ; x^2 - 4 }         //", 1);
 
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
@@ -77,11 +77,11 @@ public class RegionExtractorTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
-        runRegionVerification(indent + 1, "{ Surd[x, 3] ; x }                    // LH, Page 383 #16; Implied Domain; 3 intersection points", 2);
-        runRegionVerification(indent + 1, "{ x ; 1/2 x - 4 ; 2 - x ; 0}          // Made up: 3 regions", 3);
-        runRegionVerification(indent + 1, "{ x ; x - 2 ; 0 ; 2 }   [0, 1]   // ", 6);
-        runRegionVerification(indent + 1, "{ x ; x - 1 ; x - 2 ; x - 3 ; 0 ; 1 ; 2 ; 3 }          // Larger Parallel; 9 regions", 9);
-        runRegionVerification(indent + 1, "{ -x^2 + 4 ; x^2 - 4 } [-1, 1] //", 3);
+        runRegionVerification(indent + 1, "{ Surd[x, 3] ; x }                                    // LH, Page 383 #16; Implied Domain; 3 intersection points", 2);
+        runRegionVerification(indent + 1, "{ x ; 1/2 x - 4 ; 2 - x ; 0}                          // Made up: 3 regions", 3);
+        runRegionVerification(indent + 1, "{ x ; x - 2 ; 0 ; 2 }                         [0, 1]  // ", 3);
+        runRegionVerification(indent + 1, "{ x ; x - 1 ; x - 2 ; x - 3 ; 0 ; 1 ; 2 ; 3 }         // Larger Parallel; 9 regions", 9);
+        runRegionVerification(indent + 1, "{ -x^2 + 4 ; x^2 - 4 }                        [-1, 1] //", 1);
 
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
@@ -134,11 +134,11 @@ public class RegionExtractorTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, indent));
 
-        runRegionDetailVerification(indent + 1, "{ x^2 - 4x; 0 }                       // LH, Page 383 #7; Implied Domain", 1, true, 1, true);
-        runRegionDetailVerification(indent + 1, "{ 3 - 2x - x^2; 0 }                   // LH, Page 383 #8; Implied Domain", 1, true, 1, true);
-        runRegionDetailVerification(indent + 1, "{ x^2 + 2x + 1; 3x + 3 }              // LH, Page 383 #9; Implied Domain", 1, true, 1, true);
-        runRegionDetailVerification(indent + 1, "{ x ; 2 - x ; 0}                      // LH, Page 383 #11; Implied Domain with 3 functions", 2, true, 1, true);  
-        runRegionDetailVerification(indent + 1, "{ -x^2 + 4 ; x^2 - 4 } //", 1, true, 1, true);
+        runRegionDetailVerification(indent + 1, "{ x^2 - 4x; 0 }          // LH, Page 383 #7; Implied Domain", 1, true, 1, true);
+        runRegionDetailVerification(indent + 1, "{ 3 - 2x - x^2; 0 }      // LH, Page 383 #8; Implied Domain", 1, true, 1, true);
+        runRegionDetailVerification(indent + 1, "{ x^2 + 2x + 1; 3x + 3 } // LH, Page 383 #9; Implied Domain", 1, true, 1, true);
+        runRegionDetailVerification(indent + 1, "{ x ; 2 - x ; 0}         // LH, Page 383 #11; Implied Domain with 3 functions", 2, true, 1, true);  
+        runRegionDetailVerification(indent + 1, "{ -x^2 + 4 ; x^2 - 4 }   //", 1, true, 1, true);
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
     }
@@ -149,8 +149,8 @@ public class RegionExtractorTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, indent));
 
-        runRegionDetailVerification(indent + 1, "{ x ; 0 } [0,1]          // Parallel", 1, true, 1, false);
-        runRegionDetailVerification(indent + 1, "{ 0; 1 } [-1, 1] //", 1, false, 1, false);
+        runRegionDetailVerification(indent + 1, "{ x ; 0 } [0,1]   // Parallel", 1, true, 1, false);
+        runRegionDetailVerification(indent + 1, "{ 0; 1 }  [-1, 1] //", 1, false, 1, false);
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
     }
