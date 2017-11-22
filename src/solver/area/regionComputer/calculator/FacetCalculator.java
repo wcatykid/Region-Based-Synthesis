@@ -162,6 +162,9 @@ public class FacetCalculator<N, E>
                 {
                     break;
                 }
+                
+                if( v0Index < 0 )
+                	break ;
             }
 
             // remove last point if not connected to anything else
@@ -203,11 +206,14 @@ public class FacetCalculator<N, E>
                 // This was missing
                 // @author Drew Whitmire
                 v0Index = graph.indexOf(v0);
+
+                if( v0Index < 0 )
+                	break ;
             }
             
             primitive.add(v0);
 
-            if (graph.getNodes().get(v0Index).nodeDegree() == 0)
+            if( v0Index >= 0 && graph.getNodes().get(v0Index).nodeDegree() == 0 )
             {
                 heap.remove(v0);
                 graph.removeEdge(v0, v1);
