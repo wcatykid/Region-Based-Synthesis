@@ -4,8 +4,9 @@ import utilities.Utilities;
 
 public class ComplexNumber
 {
-	public double RealPart ;
-	public double ImaginaryPart ;
+	public boolean IsInfinity    ;
+	public double  RealPart      ;
+	public double  ImaginaryPart ;
 	
 	public boolean hasImaginaryPart()
 	{
@@ -14,6 +15,9 @@ public class ComplexNumber
 	
 	public ComplexNumber subtract( ComplexNumber rhs )
 	{
+		if( IsInfinity || rhs.IsInfinity )
+			throw new RuntimeException( "Subtraction involving infinity is undefined.  Google 'Hilbert's Hotel'." ) ;
+		
 		ComplexNumber output = new ComplexNumber() ;
 		output.RealPart = RealPart - rhs.RealPart ;
 		output.ImaginaryPart = ImaginaryPart - rhs.ImaginaryPart ;
@@ -23,6 +27,8 @@ public class ComplexNumber
 	@Override
 	public String toString()
 	{
-		return "ComplexNumber [ RealPart = " + RealPart + ", ImaginaryPart = " + ImaginaryPart + " ]" ;
+		return "ComplexNumber [ RealPart = " + RealPart
+				+ ", ImaginaryPart = " + ImaginaryPart
+				+ ", IsInfinity = " + IsInfinity + " ]" ;
 	}
 }

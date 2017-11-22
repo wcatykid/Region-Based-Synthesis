@@ -87,7 +87,7 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
         for (StringBasedFunction function : _functions)
         {
         	ComplexNumber cn = function.evaluateAtPoint( x ) ;
-        	if( ! cn.hasImaginaryPart() )
+        	if( ! cn.hasImaginaryPart() && ! cn.IsInfinity )
         		points.add( new Point( x, cn.RealPart ) ) ;
         }
 
