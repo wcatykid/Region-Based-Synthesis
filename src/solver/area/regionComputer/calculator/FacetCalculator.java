@@ -17,6 +17,7 @@ import solver.area.regionComputer.calculator.elements.Primitive;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraphEdge;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraphPoint;
+import utilities.Utilities;
 
 public class FacetCalculator<N, E>
 {
@@ -41,26 +42,6 @@ public class FacetCalculator<N, E>
         return _primitives;
     }
     
-    /**
-     * Local copy of epsilon
-     * <p>
-     * This is different from the epsilon used elsewhere in the backend.
-     * It was calibrated using trial-and-error with the ComplexTriangleGeneratorTest
-     * @author Drew Whitmire
-     */
-    public static final double EPSILON = 0.0000000001;
-
-    /**
-     * Locale copy of compare values with local EPSILON to refine facet calculation
-     * @param a
-     * @param b
-     * @return true if values are within EPSILON of each other
-     */
-    public static boolean CompareValues(double a, double b)
-    {
-        return Math.abs(a - b) < EPSILON;
-    }
-
     public FacetCalculator(PlanarGraph<N, E> g)
     {
         // input graph
@@ -399,13 +380,13 @@ public class FacetCalculator<N, E>
             double angleMeasure = PlanarGraphPoint.AngleBetween(prevCurrVector, currentNeighborVector);
 
             // if (GeometryTutorLib.Utilities.GreaterThan(crossProduct, 0)) angleMeasure = angleMeasure;
-            if (CompareValues(crossProduct, 0)) angleMeasure = Math.toRadians(180);
+            if (Utilities.looseEqualDoubles(crossProduct, 0)) angleMeasure = Math.toRadians(180);
             
             else if (crossProduct < 0) angleMeasure = Math.toRadians(360) - angleMeasure;
 
             // If there are have the same angle, choose the one farther away (it is due to two connections)
             // So these points are collinear with a segment, but indistinguishable with two arcs.
-            if (CompareValues(angleMeasure, currentAngle))
+            if (Utilities.looseEqualDoubles(angleMeasure, currentAngle))
             {
                 double currentDist = PlanarGraphPoint.calcDistance(currentPt, currentNextPoint);
                 double candDist = PlanarGraphPoint.calcDistance(currentPt, neighbor);
@@ -463,7 +444,7 @@ public class FacetCalculator<N, E>
                 double angleMeasure = PlanarGraphPoint.AngleBetween(PlanarGraphPoint.GetOppositeVector(prevCurrVector), currentNeighborVector);
 
                 // if (GeometryTutorLib.Utilities.GreaterThan(crossProduct, 0)) angleMeasure = angleMeasure;
-                if (CompareValues(crossProduct, 0))
+                if (Utilities.looseEqualDoubles(crossProduct, 0))
                 {
                       // TODO: Dr. Alvin needs to look at this
                       //commenting this out to see if it will work without it - Drew
@@ -484,7 +465,7 @@ public class FacetCalculator<N, E>
 
                 // If there are have the same angle, choose the one farther away (it is due to two connections)
                 // So these points are collinear with a segment, but indistinguishable with two arcs.
-                if (CompareValues(angleMeasure, currentAngle))
+                if (Utilities.looseEqualDoubles(angleMeasure, currentAngle))
                 {
                     double currentDist = PlanarGraphPoint.calcDistance(currentPt, currentNextPoint);
                     double candDist = PlanarGraphPoint.calcDistance(currentPt, neighbor);

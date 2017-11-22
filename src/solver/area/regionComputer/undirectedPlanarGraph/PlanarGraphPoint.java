@@ -20,7 +20,6 @@ public class PlanarGraphPoint implements Comparable<PlanarGraphPoint>
 {
     public static final int NUM_SEGS_TO_APPROX_ARC = 0;
     private static int CURRENT_ID = 0;
-    public static final double EPSILON = 0.0001;
     public static final PlanarGraphPoint ORIGIN;
 
     static
