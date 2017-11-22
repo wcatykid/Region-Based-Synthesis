@@ -194,7 +194,7 @@ public class LocalMathematicaCasInterface extends CasInterface
         // Define the function
         //
         // Determine the variable of the function
-        char variable = function.contains("x") ? 'x' : 'y';
+        char variable = function.contains("y") ? 'y' : 'x';
         
         queries[1] = fName + "[" + variable + "_]";
 
