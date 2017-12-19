@@ -100,7 +100,13 @@ public class ProblemRegionIdentifier
         // Otherwise, seek a right vertical bound region.
         Region rightRegion = computeUniqueRegion(inRegions, false);
         
-        if (leftRegion == rightRegion) System.err.println("Left and right vertical region deduced the same...shouldn't happen since computed above");
+        //In addition to checking that they are equal, we also check that at least one of them is not null (chose left arbitrarily).
+        //This is because there could be neither a left vertical nor a right vertical bound, but rather two point bounds.
+        //Though possible, this is unlikely to happen because the only reason we'd get here is if the function was given an explicit
+        // set of x-bounds but the top and bottom bounding functions create an implied domain entirely inside that explicit specification.
+        if(  	( leftRegion != null )
+        	&&	( leftRegion == rightRegion ) )
+        	System.err.println("Left and right vertical region deduced the same...shouldn't happen since computed above");
         
         // It's possible to have a single region with a left or right vertical: { x ; 0  domain : [0, 1] }
         if (leftRegion != null) solutionRegions.add(leftRegion);

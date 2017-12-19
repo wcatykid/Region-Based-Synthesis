@@ -153,6 +153,9 @@ System.out.println("|" + result + "|");
      */
     private String constructQuery(Bound f, double lowerXf, double upperXf, Bound g, double lowerXg, double upperXg)
     {
+    	//Example of what we're trying to build:
+    	//  Solve[Sin[2 x] == Cos[x] && -1.5 <= x <= 1.5, x, Reals]//N
+    	
         //
         // Acquire the intersection of these domains.
         //
@@ -168,18 +171,9 @@ System.out.println("|" + result + "|");
         //
         // Construct
         //
-        String query = "NSolve[";
-
-        query += "{";
-
-        // query += "Factor[" + f.toFullMathematicaString() + "]";
-
+        String query = "Solve[";
         query += f.toFullMathematicaString();
-        
         query += " == ";
-
-        //query += "Factor[" + g.toFullMathematicaString() + "]";
-        
         query += g.toFullMathematicaString();
         
         //
@@ -188,7 +182,7 @@ System.out.println("|" + result + "|");
         if (intersection.getLowerBound() != Double.NEGATIVE_INFINITY &&
                 intersection.getUpperBound() != Double.NEGATIVE_INFINITY)
         {
-            query += ", " + intersection.getLowerBound() + " <= x <= " + intersection.getUpperBound();
+            query += " && " + intersection.getLowerBound() + " <= x <= " + intersection.getUpperBound();
         }
         //
         // Half finite domain
@@ -196,7 +190,7 @@ System.out.println("|" + result + "|");
         else if (intersection.getLowerBound() == Double.NEGATIVE_INFINITY &&
                 intersection.getUpperBound() != Double.NEGATIVE_INFINITY)
         {
-            query += ", " + " x <= " + intersection.getUpperBound();
+            query += " && " + " x <= " + intersection.getUpperBound();
         }
         //
         // Half finite domain
@@ -204,7 +198,7 @@ System.out.println("|" + result + "|");
         else if (intersection.getLowerBound() != Double.NEGATIVE_INFINITY &&
                 intersection.getUpperBound() == Double.NEGATIVE_INFINITY)
         {
-            query += ", " + intersection.getLowerBound() + " <= x ";
+            query += " && " + intersection.getLowerBound() + " <= x ";
         }
         //
         // All Reals
@@ -212,11 +206,11 @@ System.out.println("|" + result + "|");
         else if (intersection.getLowerBound() == Double.NEGATIVE_INFINITY &&
                 intersection.getUpperBound() == Double.NEGATIVE_INFINITY)
         {
-            query += ", " + intersection.getLowerBound() + " <= x ";
+            query += " && " + intersection.getLowerBound() + " <= x ";
         } 
         else System.err.println("Intersection::intersection : unexpected domain values.");
 
-        query += "}, {x}]";
+        query += ", x, Reals]//N";
         
         return query;
     }

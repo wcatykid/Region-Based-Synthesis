@@ -14,6 +14,7 @@ import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraphNode;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraphPoint;
+import utilities.Utilities;
 
 /**
  * Given a set of functions, construct a planar graph that uniquely identifies the regions created by the
@@ -88,7 +89,21 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
         {
         	ComplexNumber cn = function.evaluateAtPoint( x ) ;
         	if( ! cn.hasImaginaryPart() && ! cn.IsInfinity )
-        		points.add( new Point( x, cn.RealPart ) ) ;
+        	{
+        		boolean alreadyThere = false ;
+        		for( Point p : points )
+        		{
+        			if( 	Utilities.equalDoubles( p.getX(), x )
+        				&&	Utilities.equalDoubles( p.getY(), cn.RealPart ) )
+        			{
+        				alreadyThere = true ;
+        				break ;
+        			}
+        		}
+
+        		if( ! alreadyThere )
+    				points.add( new Point( x, cn.RealPart ) ) ;
+        	}
         }
 
         // If all functions intersect at that point, no need for further analysis

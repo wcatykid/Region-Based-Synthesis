@@ -25,7 +25,7 @@ public class AreaSolverByYTest
         testSingleBottom(1);
         testDualBottoms(1);
         testTriBottoms(1);
-        //stillArentWorking(1) ;
+        stillArentWorking(1) ;
 
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
