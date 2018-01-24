@@ -22,10 +22,12 @@ public class AreaSolverByYTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
-        testSingleBottom(1);
-        testDualBottoms(1);
-        testTriBottoms(1);
-        stillArentWorking(1) ;
+        runProblem( 1, "{ 2-.1*x+.75*Sin[x] ; 1.2-.5*x+.8*Cos[1.5*x] } [0, 7] <1000> //" ) ;
+        
+        //testSingleBottom(1);
+        //testDualBottoms(1);
+        //testTriBottoms(1);
+        //stillArentWorking(1) ;
 
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
@@ -84,17 +86,17 @@ public class AreaSolverByYTest
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
         //These five seem to work but cause warnings to be printed
-//		runProblem(1, "{ x^2 - 6x ; 0 } [0, 6]                   <36>            // LH, Page 383 #1");// Left and right vertical region deduced the same...shouldn't happen since computed above
-//		runProblem(1, "{ x^2 + 2x + 1 ; 2x + 5 } [-2, 2]         <10.66666>      // LH, Page 383 #2");// Left and right vertical region deduced the same...shouldn't happen since computed above
-//		runProblem(1, "{ x^2 - 4x + 3 ; -x^2 + 2x + 3 } [0, 3]   <9>             // LH, Page 383 #3");// Left and right vertical region deduced the same...shouldn't happen since computed above
-//		runProblem(1, "{ x^2 ; x^3 } [0, 1]                      <0.083333>      // LH, Page 383 #4");// Left and right vertical region deduced the same...shouldn't happen since computed above
+		//runProblem(1, "{ x^2 - 6x ; 0 } [0, 6]                   <36>            // LH, Page 383 #1");// Left and right vertical region deduced the same...shouldn't happen since computed above
+		//runProblem(1, "{ x^2 + 2x + 1 ; 2x + 5 } [-2, 2]         <10.66666>      // LH, Page 383 #2");// Left and right vertical region deduced the same...shouldn't happen since computed above
+		//runProblem(1, "{ x^2 - 4x + 3 ; -x^2 + 2x + 3 } [0, 3]   <9>             // LH, Page 383 #3");// Left and right vertical region deduced the same...shouldn't happen since computed above
+		//runProblem(1, "{ x^2 ; x^3 } [0, 1]                      <0.083333>      // LH, Page 383 #4");// Left and right vertical region deduced the same...shouldn't happen since computed above
         //Additionally, this one takes quite awhile to integrate each region.
-//      runProblem(1, "{ 3 (x^3 - x); 0 } [-1, 1]                <1.5>           // LH, Page 383 #5 ; Regions: 2"); // Left and right vertical region deduced the same...shouldn't happen since computed above
+        //runProblem(1, "{ 3 (x^3 - x); 0 } [-1, 1]                <1.5>           // LH, Page 383 #5 ; Regions: 2"); // Left and right vertical region deduced the same...shouldn't happen since computed above
 
         //These two halt without printing out a stack trace after a call to Mathematica
-      runProblem(1, "{ Surd[x, 3] ; x }  <0.5> //");
-//      runProblem(1, "{ Surd[x, 3] ; x } [0, 1] <0.25> //"); // Left and right vertical region deduced the same...shouldn't happen since computed above
-//      runProblem(1, "{ (x - 1)^3 ; x - 1 } [0, 2]              <0.5>           // LH, Page 383 #6 ; Regions: 2");  // Left and right vertical region deduced the same...shouldn't happen since computed above
+        runProblem(1, "{ Surd[x, 3] ; x }  <0.5> //");
+        //runProblem(1, "{ Surd[x, 3] ; x } [0, 1] <0.25> //"); // Left and right vertical region deduced the same...shouldn't happen since computed above
+        //runProblem(1, "{ (x - 1)^3 ; x - 1 } [0, 2]              <0.5>           // LH, Page 383 #6 ; Regions: 2");  // Left and right vertical region deduced the same...shouldn't happen since computed above
 
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }

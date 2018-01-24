@@ -1,17 +1,22 @@
 package solver.area.solver;
 
 import java.util.Collections;
-import java.util.Set;
 import java.util.Vector;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import exceptions.DomainException;
 import exceptions.RepresentationException;
+import math.analysis.extrema.ExtremeValues;
+import math.analysis.intersection.Intersection;
 import math.integral.DefiniteIntegral;
 import representation.Point;
 import representation.bounds.Bound;
 import representation.bounds.functions.BoundedFunction;
 import representation.bounds.functions.DifferenceBoundedFunction;
 import representation.bounds.functions.Domain;
+import representation.bounds.functions.StringBasedFunction;
 import representation.bounds.segments.VerticalLineSegment;
 import representation.regions.LeftRight;
 import representation.regions.Region;
@@ -55,50 +60,152 @@ public class AreaSolverByY extends Solver
      */
     private Solution solveWithRespectToY(Region region)
     {
-        //
-        // (1) Find all internal maxima and minima of top and bottom functions
-        // (2) Find all split points (connections at piece-wise parts)
-        //
-        Vector<Double> xs = collectSplitsByX(region);
+        Double leftBound  = region.getLeft ().getMaximum().getX() ;
+        Double rightBound = region.getRight().getMaximum().getX() ;
 
-        //
-        // Construct all simple regions (in which all regions have at most one function or bound on each side)
-        //
-        Vector<Region> simpleRegions = constructSimpleRegions(region, xs);
+        //////////////////////////////////////////////////////////////////////
+        // DISECTLEFT and DISECTRIGHT from Paper
+        //////////////////////////////////////////////////////////////////////
 
-        // Construct the entire solution by Y
-        return solveSimpleRegions(simpleRegions);
+        //Find all internal maxima and minima of top and bottom functions (and their associated second derivative)
+        Vector<Pair<Double,Double>> topExtremaAndDir = getExtremaAndDir( region.getTop   () ) ;
+        Vector<Pair<Double,Double>> botExtremaAndDir = getExtremaAndDir( region.getBottom() ) ;
+
+        //Get all horizontals emanating from the top and bottom points of the left and right bounds
+        //Note that the bottom horizontals will be redundant (but not problematically) if the bound is a point and not a vertical
+        StringBasedFunction leftTopHorizontal  = new StringBasedFunction( new Double( region.getLeft ().getMaximum().getY() ).toString() ) ;
+        StringBasedFunction rightTopHorizontal = new StringBasedFunction( new Double( region.getRight().getMaximum().getY() ).toString() ) ;
+        StringBasedFunction leftBotHorizontal  = new StringBasedFunction( new Double( region.getLeft ().getMinimum().getY() ).toString() ) ;
+        StringBasedFunction rightBotHorizontal = new StringBasedFunction( new Double( region.getRight().getMinimum().getY() ).toString() ) ;
+
+        //TODO: add existence check before adding to the following vectors
+        
+        //Get all intersections between the horizontals and the bounds
+        Vector<Point> initialIntersections = new Vector<Point>() ;
+        getAllIntersections( region, leftTopHorizontal , leftBound, rightBound, initialIntersections ) ;
+        getAllIntersections( region, rightTopHorizontal, leftBound, rightBound, initialIntersections ) ;
+        getAllIntersections( region, leftBotHorizontal , leftBound, rightBound, initialIntersections ) ;
+        getAllIntersections( region, rightBotHorizontal, leftBound, rightBound, initialIntersections ) ;
+        
+        Predicate<Pair<Double,Double>> lessThan    = p -> p.getFirst() < p.getSecond() ;
+        Predicate<Pair<Double,Double>> greaterThan = p -> p.getFirst() > p.getSecond() ;
+        
+        Vector<Pair<Point,Point>> horizontals = new Vector<Pair<Point,Point>>() ;
+        
+        //TODO: getHorizontal doesn't yet verify that the horizontal is being drawn inside the region
+        //      use the direction being drawn and whether the function is increasing or decreasing
+
+        //Get the horizontal segment going from the top left to the right
+        getHorizontalSegment( topExtremaAndDir, botExtremaAndDir, initialIntersections,
+        		region.getLeft().getBound().leftBoundX(), region.getRight().getBound().rightBoundX(),
+        		region.getLeft().getMaximum().getY(), lessThan, horizontals ) ;
+        
+        //Get the horizontal segment going from the top right to the left
+        getHorizontalSegment( topExtremaAndDir, botExtremaAndDir, initialIntersections, 
+        		region.getRight().getBound().rightBoundX(), region.getLeft().getBound().leftBoundX(),
+        		region.getRight().getMaximum().getY(), greaterThan, horizontals ) ;
+        
+        //Get the horizontal segment going from the bottom left to the right
+        //Note that this is redundant (but not problematically) if the left bound is a point, not a line.
+        getHorizontalSegment( topExtremaAndDir, botExtremaAndDir, initialIntersections,
+        		region.getLeft().getBound().leftBoundX(), region.getRight().getBound().rightBoundX(),
+        		region.getLeft().getMinimum().getY(), lessThan, horizontals ) ;
+        
+        //Get the horizontal segment going from the bottom right to the left
+        //Note that this is redundant (but not problematically) if the right bound is a point, not a line.
+        getHorizontalSegment( topExtremaAndDir, botExtremaAndDir, initialIntersections, 
+        		region.getRight().getBound().rightBoundX(), region.getLeft().getBound().leftBoundX(),
+        		region.getRight().getMinimum().getY(), greaterThan, horizontals ) ;
+        
+        Vector<Point> finalIntersections = new Vector<Point>() ;
+        for( Pair<Point,Point> p : horizontals )
+        {
+        	finalIntersections.add( p.getFirst() ) ;
+        	finalIntersections.add( p.getSecond() ) ;
+        }
+
+        //////////////////////////////////////////////////////////////////////
+        // DISECTTOP and DISECTBOTTOM from Paper
+        //////////////////////////////////////////////////////////////////////
+        
+        //TODO: all of this
+        
+        //////////////////////////////////////////////////////////////////////
+        // ADDTOPVERTICALS and ADDBOTTOMVERTICALS 
+        //////////////////////////////////////////////////////////////////////
+
+        //TODO: all of this
+
+        //////////////////////////////////////////////////////////////////////
+        // COMPUTE ALL SUBREGIONS
+        //////////////////////////////////////////////////////////////////////
+        
+        //TODO: all of this (which is still magic)
+        
+        //////////////////////////////////////////////////////////////////////
+        // INTEGRATE ALL SUB-REGIONS W.R.T y AND SUM
+        //////////////////////////////////////////////////////////////////////
+
+        //TODO: all of this
+
+        return null ;
+    }
+    
+    private Vector<Pair<Double,Double>> getExtremaAndDir( TopBottom region )
+    {
+        Vector<Pair<Double,Double>> extremaAndDir = new Vector<Pair<Double,Double>>() ;
+        
+        for( Bound bound : region.getBounds() )
+        {
+        	Vector<Double> extrema = new Vector<Double>( ExtremeValues.getInstance().extrema( bound ) ) ;
+            Collections.sort( extrema ) ;
+        	Vector<Double> extremaDir = ExtremeValues.getInstance().secondDerivativeAtPoints( bound, extrema ) ;
+        	
+        	extremaAndDir.addAll( IntStream
+        	  .range( 0, extrema.size() )
+        	  .mapToObj( i -> new Pair<Double,Double>( extrema.get( i ), extremaDir.get( i ) ) )
+        	  .collect( Collectors.toList() ) ) ;
+        }
+        
+        return extremaAndDir ;
+    }
+    
+    private void getAllIntersections( Region region, StringBasedFunction horizontal, Double leftBound, Double rightBound, Vector<Point> intersections )
+    {
+        intersections.addAll( Intersection.getInstance().allIntersections( region.getLeft ().getBound(), horizontal, leftBound, rightBound ) ) ;
+        intersections.addAll( Intersection.getInstance().allIntersections( region.getRight().getBound(), horizontal, leftBound, rightBound ) ) ;
+
+        for( Bound bound : region.getTop().getBounds() )
+        	intersections.addAll( Intersection.getInstance().allIntersections( bound, horizontal, leftBound, rightBound ) ) ;
+        
+        for( Bound bound : region.getBottom().getBounds() )
+        	intersections.addAll( Intersection.getInstance().allIntersections( bound, horizontal, leftBound, rightBound ) ) ;
     }
 
-    /**
-     * @param region -- a region
-     * @return a set of x-values where we will split this region: extrema and piece-wise split-points
-     */
-    private Vector<Double> collectSplitsByX(Region region)
+    private void getHorizontalSegment( Vector<Pair<Double,Double>> topExtremaAndDir,
+    								   Vector<Pair<Double,Double>> botExtremaAndDir,
+    								   Vector<Point> intersections,
+    								   Double beginX, Double endX, Double y,
+    								   Predicate<Pair<Double,Double>> comparisonFunc,
+    								   Vector<Pair<Point,Point>> horizontals )
     {
-        // Extrema
-        Set<Double> xs = region.extremaByX();
+        Double firstNonExtremaIntersection = beginX ;
 
-        // Piece-wise split points
-        /**
-         * An inverted region shifts these responsibilities 90 degrees:
-         *                top                                                     Right (Greatest y)
-         *         ------------------------                                  ---------------------
-         *        |                        |                                |                      |
-         *        |                        |            possibly            |                      |
-         * Left   |                        | Right     ============> Bottom |                      | top
-         *        |                        |                      (least X) |                      | (greatest X)
-         *        |                        |                                |                      |
-         *         ------------------------                                  ----------------------
-         *                Bottom                                                    Left (least y)
-         */
-        xs.addAll(region.interiorPiecesByX()); // Need this for the region code to work for 'inverted' regions'
+        for( Point p : intersections )
+        {
+        	if( 	comparisonFunc.test( new Pair<Double,Double>( p.getX(), firstNonExtremaIntersection ) )
+        		&&	( ! Utilities.equalDoubles( p.getX(), firstNonExtremaIntersection ) )
+        		&&	topExtremaAndDir.stream().filter( pair -> Utilities.equalDoubles( pair.getFirst(), p.getY() ) ).count() == 0
+        		&&	botExtremaAndDir.stream().filter( pair -> Utilities.equalDoubles( pair.getFirst(), p.getY() ) ).count() == 0 )
+        	{
+        		firstNonExtremaIntersection = p.getX() ;
+        	}
+        }
 
-        // Sort and return
-        Vector<Double> ordered = new Vector<Double>(xs);
-        Collections.sort(ordered);
-
-        return ordered;
+        if( ! Utilities.equalDoubles( endX, firstNonExtremaIntersection ) )
+        {
+        	horizontals.add( new Pair<Point,Point>( new Point( endX, y ), new Point( firstNonExtremaIntersection, y ) ) ) ;
+        }
     }
 
     /**
