@@ -1,4 +1,4 @@
-package solver.area.parser;
+package solver.volume.parser;
 
 import math.external_interface.LocalMathematicaCasInterface;
 import representation.bounds.functions.Domain;
@@ -7,7 +7,7 @@ import solver.area.TextbookAreaProblem;
 /**
  * Given a complete file of Mathematica encoded problems in String form, return the indicated set of area problems.
  */
-public class AreaProblemParser
+public class VolumeProblemParser
 {
     protected String _problemString;
 
@@ -15,7 +15,7 @@ public class AreaProblemParser
     protected TextbookAreaProblem _problem;
     public TextbookAreaProblem getProblem() { return _problem; }
 
-    public AreaProblemParser(String line)
+    public VolumeProblemParser(String line)
     {
         _problemString = line;
     }

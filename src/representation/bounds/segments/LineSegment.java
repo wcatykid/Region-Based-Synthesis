@@ -92,9 +92,7 @@ public class LineSegment extends Bound implements Serializable
     //
     public ComplexNumber evaluateAtPoint(double x)
     {
-    	ComplexNumber output = new ComplexNumber() ;
-    	output.RealPart = slope() * (x - _bottomPt.getX()) + _bottomPt.getY() ; 
-        return output ;
+        return new ComplexNumber(slope() * (x - _bottomPt.getX()) + _bottomPt.getY());
     }
 
     //

@@ -31,7 +31,7 @@ public abstract class Analyzer
         Vector<Point> points = new Vector<Point>();
         for (Double x : xs)
         {
-            Point pt = new Point(x, f.evaluateAtPoint(x).RealPart);
+            Point pt = new Point(x, f.evaluateAtPoint(x).getReal());
 
             points.add(pt);
             
