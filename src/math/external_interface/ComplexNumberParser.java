@@ -25,17 +25,11 @@ public class ComplexNumberParser
      */
     public static ComplexNumber simplify(String number)
     {
-    	ComplexNumber output = new ComplexNumber() ;
-    	if( number.indexOf("Infinity") >= 0 )
-    	{
-    		output.IsInfinity = true ;
-    	}
-    	else
-    	{
-            output.RealPart = simplifyConstant(getRealPart(number));
-            output.ImaginaryPart = simplifyConstant(getImaginaryPart(number));
-    	}
-        return output ;
+    	if ( number.indexOf("Infinity") != -1 ) return new ComplexNumber(); // Infinite by default
+
+    	// Standard compelx number: a + bi
+        return new ComplexNumber(simplifyConstant(getRealPart(number)),
+    	                         simplifyConstant(getImaginaryPart(number)));
     }
 
     /**

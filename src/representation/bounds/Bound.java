@@ -71,8 +71,8 @@ public abstract class Bound implements Serializable
     public boolean inRange(double y1, double y2)
     {
         // Acquire the range values
-        double lowRangeY = evaluateAtPoint(_domain.getLowerBound()).RealPart;
-        double upperRangeY = evaluateAtPoint(_domain.getUpperBound()).RealPart;
+        double lowRangeY = evaluateAtPoint(_domain.getLowerBound()).getReal();
+        double upperRangeY = evaluateAtPoint(_domain.getUpperBound()).getReal();
 
         // Check whether the given interval is within the range interval
         return inRange(y1, y2, lowRangeY, upperRangeY);
@@ -149,12 +149,12 @@ public abstract class Bound implements Serializable
         // Equate x-values first; then check y-values
         if (Utilities.equalDoubles(_domain.getLowerBound(), pt.getX()))
         {
-            double leftY = evaluateAtPoint(_domain.getLowerBound()).RealPart;
+            double leftY = evaluateAtPoint(_domain.getLowerBound()).getReal();
             return Utilities.equalDoubles(leftY, pt.getY());
         }
         else if (Utilities.equalDoubles(_domain.getUpperBound(), pt.getX()))
         {
-            double rightY = evaluateAtPoint(_domain.getUpperBound()).RealPart;
+            double rightY = evaluateAtPoint(_domain.getUpperBound()).getReal();
             return Utilities.equalDoubles(rightY, pt.getY());
         }
 

@@ -32,7 +32,7 @@ public class ComplexNumberParserTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, indent));
 
-        Assertions.Assert(ComplexNumberParser.simplify(number).RealPart, expected);
+        Assertions.Assert(ComplexNumberParser.simplify(number).getReal(), expected);
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
     }

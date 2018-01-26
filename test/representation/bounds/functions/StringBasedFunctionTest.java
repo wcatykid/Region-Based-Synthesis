@@ -38,7 +38,7 @@ public class StringBasedFunctionTest
         
         for (int y = 0; y < 20; y++)
         {
-            Assertions.Assert(f.evaluateAtPointByY(y*y).RealPart, y);
+            Assertions.Assert(f.evaluateAtPointByY(y*y).getReal(), y);
         }
         
         //
@@ -49,7 +49,7 @@ public class StringBasedFunctionTest
         
         for (int y = 0; y < 20; y++)
         {
-            Assertions.Assert(f.evaluateAtPointByY(y).RealPart, y*y);
+            Assertions.Assert(f.evaluateAtPointByY(y).getReal(), y*y);
         }
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
@@ -68,7 +68,7 @@ public class StringBasedFunctionTest
 
         for (int x = -10; x < 10; x++)
         {
-            Assertions.Assert(f.evaluateAtPoint(x).RealPart, 2 * x * (1 - x));
+            Assertions.Assert(f.evaluateAtPoint(x).getReal(), 2 * x * (1 - x));
         }
 
         //
@@ -78,7 +78,7 @@ public class StringBasedFunctionTest
 
         for (int x = -10; x < 10; x++)
         {
-            Assertions.Assert(trig.evaluateAtPoint(x).RealPart, 0);
+            Assertions.Assert(trig.evaluateAtPoint(x).getReal(), 0);
         }
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
@@ -115,7 +115,7 @@ public class StringBasedFunctionTest
 
         for (int x = -10; x < 10; x++)
         {
-            Assertions.Assert(f.evaluateAtPoint(x).RealPart, 2 * x * (1 - x));
+            Assertions.Assert(f.evaluateAtPoint(x).getReal(), 2 * x * (1 - x));
         }
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
@@ -136,7 +136,7 @@ public class StringBasedFunctionTest
 
         for (int x = -10; x < 10; x++)
         {
-            Assertions.Assert(f.evaluateAtPoint(x).RealPart, 2 * (x - h) * (1 - (x - h)));
+            Assertions.Assert(f.evaluateAtPoint(x).getReal(), 2 * (x - h) * (1 - (x - h)));
         }
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
@@ -156,7 +156,7 @@ public class StringBasedFunctionTest
 
         for (int x = -10; x < 10; x++)
         {
-            Assertions.Assert(f.evaluateAtPoint(x).RealPart, 2 * (x - h) * (1 - (x - h)) + k);
+            Assertions.Assert(f.evaluateAtPoint(x).getReal(), 2 * (x - h) * (1 - (x - h)) + k);
         }
 
         System.out.println(StringUtilities.generateTestEndString(testName, indent));
@@ -182,7 +182,7 @@ public class StringBasedFunctionTest
 
                 for (int x = -10; x < 10; x++)
                 {
-                    Assertions.Assert(f.evaluateAtPoint(x).RealPart, (x - h) * (x - h) * (1 - (x - h)) + k);
+                    Assertions.Assert(f.evaluateAtPoint(x).getReal(), (x - h) * (x - h) * (1 - (x - h)) + k);
                 }
             }
         }
@@ -223,21 +223,21 @@ public class StringBasedFunctionTest
 
             for (int x = -30; x < 30; x++)
             {
-                Assertions.Assert(f.evaluateAtPoint(x).RealPart, a * (x - h) * (x - h) * (1 - (x - h)) + k);
+                Assertions.Assert(f.evaluateAtPoint(x).getReal(), a * (x - h) * (x - h) * (1 - (x - h)) + k);
             }
 
             f.reflectOverX();
 
             for (int x = -30; x < 30; x++)
             {
-                Assertions.Assert(f.evaluateAtPoint(x).RealPart, - a * (x - h) * (x - h) * (1 - (x - h)) + k);
+                Assertions.Assert(f.evaluateAtPoint(x).getReal(), - a * (x - h) * (x - h) * (1 - (x - h)) + k);
             }
 
             f.reflectOverY();
 
             for (int x = -30; x < 30; x++)
             {
-                Assertions.Assert(f.evaluateAtPoint(x).RealPart, -a * (x - h) * (x - h) * (1 + (x - h)) + k);
+                Assertions.Assert(f.evaluateAtPoint(x).getReal(), -a * (x - h) * (x - h) * (1 + (x - h)) + k);
             }
         }
 
@@ -264,21 +264,21 @@ public class StringBasedFunctionTest
 
             for (int x = -30; x < 30; x++)
             {
-                Assertions.Assert(f.evaluateAtPoint(x).RealPart, (b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
+                Assertions.Assert(f.evaluateAtPoint(x).getReal(), (b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
             }
 
             f.reflectOverX();
 
             for (int x = -30; x < 30; x++)
             {
-                Assertions.Assert(f.evaluateAtPoint(x).RealPart, -(b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
+                Assertions.Assert(f.evaluateAtPoint(x).getReal(), -(b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
             }
 
             f.reflectOverY();
 
             for (int x = -30; x < 30; x++)
             {
-                Assertions.Assert(f.evaluateAtPoint(x).RealPart, -(-b * (x - h)) * (-b * (x - h)) * (1 - (-b * (x - h))) + k);
+                Assertions.Assert(f.evaluateAtPoint(x).getReal(), -(-b * (x - h)) * (-b * (x - h)) * (1 - (-b * (x - h))) + k);
             }
         }
 
@@ -307,21 +307,21 @@ public class StringBasedFunctionTest
 
                 for (int x = -10; x < 10; x++)
                 {
-                    Assertions.Assert(f.evaluateAtPoint(x).RealPart, a * (b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
+                    Assertions.Assert(f.evaluateAtPoint(x).getReal(), a * (b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
                 }
 
                 f.reflectOverX();
 
                 for (int x = -10; x < 10; x++)
                 {
-                    Assertions.Assert(f.evaluateAtPoint(x).RealPart, -a * (b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
+                    Assertions.Assert(f.evaluateAtPoint(x).getReal(), -a * (b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
                 }
 
                 f.reflectOverY();
 
                 for (int x = -10; x < 10; x++)
                 {
-                    Assertions.Assert(f.evaluateAtPoint(x).RealPart, -a * (-b * (x - h)) * (-b * (x - h)) * (1 - (-b * (x - h))) + k);
+                    Assertions.Assert(f.evaluateAtPoint(x).getReal(), -a * (-b * (x - h)) * (-b * (x - h)) * (1 - (-b * (x - h))) + k);
                 }
             }
         }
@@ -353,7 +353,7 @@ public class StringBasedFunctionTest
 
                     for (int x = -30; x < 30; x++)
                     {
-                        Assertions.Assert(f.evaluateAtPoint(x).RealPart, (1.0 / a) * ((1.0/b) * (x - h)) * ((1.0/b) * (x - h)) + k);
+                        Assertions.Assert(f.evaluateAtPoint(x).getReal(), (1.0 / a) * ((1.0/b) * (x - h)) * ((1.0/b) * (x - h)) + k);
                     }
                 }
             }
@@ -387,7 +387,7 @@ public class StringBasedFunctionTest
 
                         for (int x = -10; x < 10; x++)
                         {
-                            Assertions.Assert(f.evaluateAtPoint(x).RealPart, a * (b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
+                            Assertions.Assert(f.evaluateAtPoint(x).getReal(), a * (b * (x - h)) * (b * (x - h)) * (1 - (b * (x - h))) + k);
                         }
                     }
                 }

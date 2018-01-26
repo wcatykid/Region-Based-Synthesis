@@ -88,13 +88,13 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
         for (StringBasedFunction function : _functions)
         {
         	ComplexNumber cn = function.evaluateAtPoint( x ) ;
-        	if( ! cn.hasImaginaryPart() && ! cn.IsInfinity )
+        	if( ! cn.hasImaginaryPart() && ! cn.isInfinite() )
         	{
         		boolean alreadyThere = false ;
         		for( Point p : points )
         		{
         			if( 	Utilities.equalDoubles( p.getX(), x )
-        				&&	Utilities.equalDoubles( p.getY(), cn.RealPart ) )
+        				&&	Utilities.equalDoubles( p.getY(), cn.getReal() ) )
         			{
         				alreadyThere = true ;
         				break ;
@@ -102,7 +102,7 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
         		}
 
         		if( ! alreadyThere )
-    				points.add( new Point( x, cn.RealPart ) ) ;
+    				points.add( new Point( x, cn.getReal() ) ) ;
         	}
         }
 
@@ -162,7 +162,7 @@ public class PlanarGraphBuilderWithVerticals extends PlanarGraphBuilder
         {
         	ComplexNumber cn = _functions[ fIndex ].evaluateAtPoint( x ) ;
         	if( ! cn.hasImaginaryPart() )
-        		pointSet.add( new Point( x, cn.RealPart ) ) ;
+        		pointSet.add( new Point( x, cn.getReal() ) ) ;
         }
 
         //

@@ -35,9 +35,7 @@ public class PointBound extends Bound implements Serializable
     //
     public ComplexNumber evaluateAtPoint(double x)
     {
-    	ComplexNumber output = new ComplexNumber() ;
-    	output.RealPart = this._point.getY() ; 
-    	return output ;
+        return new ComplexNumber(this._point.getY());
     }
     
     @Override public boolean isPoint() { return true; }

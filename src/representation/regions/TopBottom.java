@@ -58,7 +58,7 @@ public class TopBottom extends RegionBound implements Serializable
         // Acquire the bound; evaluate
         Bound bound = getBound(x);
 
-        return bound.evaluateAtPoint(x).RealPart;
+        return bound.evaluateAtPoint(x).getReal();
     }
 
     /**
@@ -187,7 +187,7 @@ public class TopBottom extends RegionBound implements Serializable
         for (Bound bound : _bounds)
         {
             double x = bound.rightBoundX();
-            double fx = bound.evaluateAtPoint(x).RealPart;
+            double fx = bound.evaluateAtPoint(x).getReal();
 
             points.add(new Point(x, fx));
         }
@@ -234,7 +234,7 @@ public class TopBottom extends RegionBound implements Serializable
     public Point acquireLeftBoundPoint()
     {
         double x = _bounds.get(0).leftBoundX();
-        double fx = _bounds.get(0).evaluateAtPoint(x).RealPart;
+        double fx = _bounds.get(0).evaluateAtPoint(x).getReal();
 
         return new Point(x, fx);
     }
@@ -245,7 +245,7 @@ public class TopBottom extends RegionBound implements Serializable
     public Point acquireRightBoundPoint()
     {
         double x = _bounds.get(_bounds.size() - 1).rightBoundX();
-        double fx = _bounds.get(_bounds.size() - 1).evaluateAtPoint(x).RealPart;
+        double fx = _bounds.get(_bounds.size() - 1).evaluateAtPoint(x).getReal();
 
         return new Point(x, fx);
     }

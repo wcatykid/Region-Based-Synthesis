@@ -38,11 +38,9 @@ public class VerticalLineSegment extends LineSegment implements Serializable
     //
     @Override public ComplexNumber evaluateAtPoint(double x)
     {
-    	ComplexNumber output = new ComplexNumber() ;
-    	output.RealPart = Double.NEGATIVE_INFINITY ;
-    	return output ;
+        return new ComplexNumber(Double.NEGATIVE_INFINITY);
     }
-    
+
     @Override public boolean isVertical() { return true; }
     @Override public Point getMinimum() { return _bottomPt; }
     @Override public Point getMaximum() { return _topPt; }
@@ -52,11 +50,9 @@ public class VerticalLineSegment extends LineSegment implements Serializable
     //
     public ComplexNumber evaluateAtPointByY(double x)
     {
-    	ComplexNumber output = new ComplexNumber() ;
-    	output.RealPart = _bottomPt.getX() ;
-    	return output ;
+        return new ComplexNumber(_bottomPt.getX());
     }
-    
+
     /**
      * @param y1 -- y-valued double
      * @param y2 -- y-valued double

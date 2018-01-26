@@ -53,7 +53,7 @@ public class DefiniteIntegral extends IntegralExpression
         //
         String query = toMathematicaString();
         
-        _memoizedEvaluation = LocalMathematicaCasInterface.getInstance().queryComplexNumber(query).RealPart;
+        _memoizedEvaluation = LocalMathematicaCasInterface.getInstance().queryComplexNumber(query).getReal();
         
         return _memoizedEvaluation;
     }

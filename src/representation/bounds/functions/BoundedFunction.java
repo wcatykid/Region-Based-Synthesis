@@ -184,9 +184,7 @@ public class BoundedFunction extends Bound implements Serializable
 
     public ComplexNumber evaluateAtPoint(double x)
     {
-    	ComplexNumber output = new ComplexNumber() ;
-    	output.RealPart = _fType.evaluate(a, b, h, k, x) ; 
-        return output ;
+    	return new ComplexNumber(_fType.evaluate(a, b, h, k, x));
     }
 
     @Override
