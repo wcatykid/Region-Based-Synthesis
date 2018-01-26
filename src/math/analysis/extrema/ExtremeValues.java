@@ -260,7 +260,7 @@ public class ExtremeValues extends Analyzer
     
     public Vector<Double> firstDerivativeAtPoints( Bound f, Vector<Double> points )
     {
-        String query = "InputForm[D[" ;
+        String query = "InputForm[D[" ; 
         query += f.toFullMathematicaString() ;
         query += ", {x, 1}]] /. x -> {" ;
         query += String.join( ", ", points.stream().map( n -> n.toString() ).collect( Collectors.toList() ) ) ;  
