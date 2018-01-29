@@ -5,6 +5,7 @@ import java.util.List;
 
 import representation.bounds.functions.Domain;
 import solver.TextbookProblem;
+import utilities.Pair;
 
 /**
  *  A textbook problem consists of a set of functions over a particular interval (domain) 
@@ -14,6 +15,23 @@ public class TextbookVolumeProblems extends TextbookProblem
     protected ArrayList<AxisOfRevolution> _axes; // One region might have several axes specified with the problem
     protected ArrayList<Double> _answers;        // Parallel: corresponding answers to the n problems
 
+    /**
+     * @param index -- position of desired problem
+     * @return the corresponding pair <axis, answer>
+     */
+    public Pair<AxisOfRevolution, Double> getAxisAnswerPair(int index)
+    {
+        if (index < 0 || index >= _axes.size()) throw new IndexOutOfBoundsException(Integer.toString(index));
+
+        return new Pair<AxisOfRevolution, Double>(_axes.get(index), _answers.get(index));
+    }
+    
+    /**
+     * This method is invalid for volume problems since the answer is based on the axis (and there may be many axes).
+     */
+    @Override
+    public double getAnswer() { throw new UnsupportedOperationException(); }
+    
     public TextbookVolumeProblems(String[] functions, Domain domain, AxisOfRevolution axis, String data, double answer)
     {
         super(functions, domain, data);

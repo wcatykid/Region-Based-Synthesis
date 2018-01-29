@@ -23,7 +23,11 @@ public class AxisOfRevolution
 {
     protected Bound _axis;                     // Treat it as a line; Vertical and Horizontal lines are both Bounds in the hierarchy (not LineSegment)
     protected StringBasedFunction _strAxis;    // Treat the axis as a function wrt a particular variable
-
+    protected String _basicStrAxis;            // Store a local, simple version
+    
+    public StringBasedFunction getAxis() { return _strAxis; }
+    public String getSimpleAxis() { return _basicStrAxis; }
+    
     /**
      *     
      * @param axis -- string-based representation of a linear expression of the form x = C or y = C
@@ -67,9 +71,9 @@ public class AxisOfRevolution
         //
         // Construct a 'refined' string-based function representation
         //
-        String function = variable + " = " + constant;
+        _basicStrAxis = variable + " = " + constant;
 
-        _strAxis = new StringBasedFunction(function);
+        _strAxis = new StringBasedFunction(_basicStrAxis);
     }
 
     public boolean isVertical() { return _axis.isVertical(); }
@@ -84,5 +88,19 @@ public class AxisOfRevolution
     public String toString()
     {
         return _strAxis.toString();
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        
+        if (obj == null) return false;
+        
+        if (!(obj instanceof AxisOfRevolution)) return false;
+        
+        AxisOfRevolution that = (AxisOfRevolution)obj;
+
+        return this._basicStrAxis.equals(that.getSimpleAxis());
     }
 }
