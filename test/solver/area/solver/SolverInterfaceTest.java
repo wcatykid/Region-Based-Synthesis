@@ -1,6 +1,8 @@
 package solver.area.solver;
 
 import org.junit.Test;
+
+import exceptions.DomainException;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParserTest;
 import utilities.Assertions;
@@ -9,7 +11,7 @@ import utilities.StringUtilities;
 public class SolverInterfaceTest
 {
     @Test
-    public void test()
+    public void test() throws DomainException
     {
         String testName = "Solving Area-Based Problems: Solver Interface Tests";
 
@@ -109,7 +111,7 @@ public class SolverInterfaceTest
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
 
-    private void runProblemArea(int indent, String pStr)
+    private void runProblemArea(int indent, String pStr) throws DomainException
     {
         System.out.println(StringUtilities.generateTestStartString(pStr, indent));
 
