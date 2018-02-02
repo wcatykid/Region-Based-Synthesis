@@ -61,8 +61,7 @@ public class ComplexNumber
     @Override
     public String toString()
     {
-        return "ComplexNumber [ RealPart = " + _realPart
-                + ", ImaginaryPart = " + _imagPart
+        return "ComplexNumber [ (" + _realPart + (_imagPart < 0 ? " - " : " + ") + Math.abs(_imagPart) + "i "
                 + ", IsInfinity = " + _isInfinite + " ]" ;
     }
 }

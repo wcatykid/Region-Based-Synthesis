@@ -1,177 +1,105 @@
 package solver.volume.parser;
 
+import java.util.ArrayList;
+
 import math.external_interface.LocalMathematicaCasInterface;
 import representation.bounds.functions.Domain;
 import solver.area.TextbookAreaProblem;
+import solver.parser.ProblemParseUtilities;
+import solver.parser.ProblemParser;
+import solver.volume.AxisOfRevolution;
+import solver.volume.TextbookVolumeProblems;
+import utilities.Pair;
 
 /**
  * Given a complete file of Mathematica encoded problems in String form, return the indicated set of area problems.
+ * 
+ * Sample format (injects axis / answer information from the "Area Between Curves" Problem):
+ *   { Function-1; Function-2 ; ... ; Function-n } [x-left, x-right] [<axis-1, answer-1>; <axis-2, answer-2>; ... >] // Metadata
+ * 
+ * Note: axes and answers are uniquely identified by the 2-character sequence "[<" and ended by ">]"
  */
-public class VolumeProblemParser
+public class VolumeProblemParser implements ProblemParser
 {
+    // Problem string for parsing.
     protected String _problemString;
 
-    // The actual problem extracted from the file.
-    protected TextbookAreaProblem _problem;
-    public TextbookAreaProblem getProblem() { return _problem; }
+    public VolumeProblemParser(String line) { _problemString = line; }
+    
+    // Extracted volume problem(s)
+    protected TextbookVolumeProblems _problem;
+    public TextbookVolumeProblems getProblem() { return _problem; }
 
-    public VolumeProblemParser(String line)
-    {
-        _problemString = line;
-    }
+    // AXES / ANSWERS delimiters
+    private static final String BEGIN_AXES_DELIMITER = "[<";
+    private static final String END_AXES_DELIMITER = ">]";
 
     /**
-     * @param line -- a String-based representation of the problem in the format discussed below
-     * @return a textbook problem object
-     * Format:
+     * @param line -- a String-based representation of the problem in the format discussed above / below
      * 
-     * { Function-1; Function-2 ; ... ; Function-n } [x-left, x-right] // Metadata
+     * Format:
+     * { Function-1; Function-2 ; ... ; Function-n } [x-left, x-right] [<axis-1, answer-1>; <axis-2, answer-2>; ... >] // Metadata
      * 
      */
-    protected void parse()
+    public void parse()
     {
-        String[] functions = extractFunctions(_problemString);
+        String[] functions = ProblemParseUtilities.extractFunctions(_problemString);
 
         System.out.println(functions);
 
-        Domain domain = extractDomain(_problemString);
+        Domain domain = ProblemParseUtilities.extractDomain(_problemString);
 
         System.out.println("Domain: " + domain);
 
-        String metadata = extractMetadata(_problemString);
+        String metadata = ProblemParseUtilities.extractMetadata(_problemString);
 
         System.out.println("Metadata: " + metadata);
-        
-        double answer = extractAnswer(_problemString);
 
-        System.out.println("Answer: " + answer);
-        
-        _problem = new TextbookAreaProblem(functions, domain, metadata, answer);
+        Pair<ArrayList<AxisOfRevolution>, ArrayList<Double>> aas = extractAxesAndAnswers(_problemString);
+
+        for (int index = 0; index < aas.getFirst().size(); index++)
+        {
+            System.out.print("< " + aas.getFirst().get(index) + ", " + aas.getSecond().get(index));
+        }
+
+        System.out.println();
+
+        _problem = new TextbookVolumeProblems(functions, domain, aas.getFirst(), metadata, aas.getSecond());
     }
 
-    /**
-     * @param line -- a String-based representation of the problem in the format discussed below
-     * @return The functions involved in a textbook problem
-     * Format:
-     * 
-     * { Function-1; Function-2 ; ... ; Function-n } [x-left, x-right] // Metadata
-     * 
-     */
-    private String[] extractFunctions(String line)
-    {
-        int beginFunctionsIndex = line.indexOf('{');
-        int endFunctionsIndex = line.indexOf('}');
-
-        String functionStr = line.substring(beginFunctionsIndex + 1, endFunctionsIndex);
-        return functionStr.split(";");
-    }
-
-    /**
-     * @param line -- a String-based representation of the problem in the format discussed below
-     * @return The domain involved in a textbook problem
-     * Format:
-     * 
-     * { Function-1; Function-2 ; ... ; Function-n } [x-left, x-right] // Metadata
-     * 
-     */
-    private Domain extractDomain(String line)
+    Pair<ArrayList<AxisOfRevolution>, ArrayList<Double>> extractAxesAndAnswers(String line)
     {
         //
         // Find the beginning of the domain: after the region specification
         //
-        String dStr = line.substring(line.indexOf('}') + 1);
-
+        int beginIndex = line.indexOf(BEGIN_AXES_DELIMITER) + BEGIN_AXES_DELIMITER.length() - 1; // We want the beginning '<'
+        int endIndex = line.indexOf(END_AXES_DELIMITER) + 1;                                     // We want the final '>'
+        String aas = ProblemParseUtilities.replaceConstants(line.substring(beginIndex, endIndex));
+        
         //
-        // Parse the domain
+        // <Axis / Answer> pairs
         //
-        int beginDomainIndex = dStr.indexOf('[');
-        double left_x = Double.POSITIVE_INFINITY;
-        double right_x = Double.NEGATIVE_INFINITY;
-
-        // The domain may not have been provided; if it has, read it
-        if (beginDomainIndex != -1)
+        ArrayList<AxisOfRevolution> axes = new ArrayList<AxisOfRevolution>();
+        ArrayList<Double> answers = new ArrayList<Double>();
+        
+        //
+        // Split the string by Parse the pairs
+        //
+        String[] pairs = aas.split(";");
+        for (String pair : pairs)
         {
-            int endDomainIndex = dStr.indexOf(']');
+            // Axis
+            String axisStr = pair.substring(pair.indexOf('<') + 1, pair.indexOf(','));            
+            axes.add(new AxisOfRevolution(axisStr));
 
-            String domainStr = dStr.substring(beginDomainIndex + 1, endDomainIndex);
-            domainStr = replaceConstants(domainStr);
-            String[] bounds = domainStr.split(",");
-
-            left_x = LocalMathematicaCasInterface.getInstance().queryComplexNumber(bounds[0]).getReal();
-            right_x = LocalMathematicaCasInterface.getInstance().queryComplexNumber(bounds[1]).getReal(); // Double.parseDouble(bounds[1])
+            // Answer
+            String answer = pair.substring(pair.indexOf(',') + 1, pair.indexOf('>'));
+            answers.add(LocalMathematicaCasInterface.getInstance().queryComplexNumber(answer).getReal());
         }
-
-        // No domain was 
-        if (right_x == Double.NEGATIVE_INFINITY) return null;
-
-        return new Domain(left_x, right_x);
+        
+        return new Pair<ArrayList<AxisOfRevolution>, ArrayList<Double>>(axes, answers);
     }
 
-    /**
-     * Replace all constants with evaluative Mathematica expressions
-     * @param s
-     * @return
-     */
-    private String replaceConstants(String start)
-    {
-        String s = start.replaceAll("Pi", "N[Pi]");
-        
-        s = s.replaceAll("PI", "N[Pi]");
-        s = s.replaceAll("pi", "N[Pi]");
-
-        s = s.replaceAll("E", "N[E]");
-        s = s.replaceAll("e", "N[E]");
-
-        return s;
-    }
-    
-    /**
-     * @param line -- a String-based representation of the problem in the format discussed below
-     * @return The metadata involved in a textbook problem
-     * Format:
-     * 
-     * { Function-1; Function-2 ; ... ; Function-n } [x-left, x-right] // Metadata
-     * 
-     */
-    private String extractMetadata(String line)
-    {
-        // Seek the comment
-        int beginDataIndex = line.indexOf("//");
-
-        // Empty comment
-        if (beginDataIndex == -1) return "";
-        
-        String data = line.substring(beginDataIndex + 2);
-
-        return data.trim();
-    }
-
-    /**
-     * @param line -- a String-based representation of the problem in the format discussed below
-     * @return The numeric value indicating the answer to this textbook problem
-     * Format:
-     * 
-     * { Function-1; Function-2 ; ... ; Function-n } [x-left, x-right] <Answer> // Metadata
-     * 
-     */
-    private double extractAnswer(String line)
-    {
-        //
-        // Identify the answer substring
-        //
-        int beginAnswerIndex = line.indexOf("<");
-        if (beginAnswerIndex == -1) return TextbookAreaProblem.DEFAULT_ANSWER;
-
-        int endAnswerIndex = line.indexOf(">");
-        if (endAnswerIndex == -1) return TextbookAreaProblem.DEFAULT_ANSWER;
-        
-        // This substring will be a mathematica based expression: evaluate Pi etc.
-        String answer = line.substring(beginAnswerIndex+1, endAnswerIndex);
-        answer = replaceConstants(answer);
-        
-        return LocalMathematicaCasInterface.getInstance().queryComplexNumber(answer).getReal();
-    }
-    
     /**
      * @return T/F whether the string contains cursory information required of a problem.
      */
@@ -181,6 +109,10 @@ public class VolumeProblemParser
         if (_problemString.indexOf('{') == -1) return false; 
         if (_problemString.indexOf('}') == -1) return false;
 
+        // Verify that the axes is/are specified
+        if (_problemString.indexOf("[<") == -1) return false; 
+        if (_problemString.indexOf(">]") == -1) return false;
+        
         // The metadata should be there for information-tracking purposes
         if (_problemString.indexOf("//") == -1) return false;
 
