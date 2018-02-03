@@ -63,7 +63,7 @@ public class AreaSolverByY extends Solver
      */
     private Solution solveWithRespectToY(Region region) throws DomainException
     {
-    	if( 	( region.getTop().getBounds().size() != 1 )
+    	if( 	( region.getTop   ().getBounds().size() != 1 )
     		||	( region.getBottom().getBounds().size() != 1 ) )
     		throw new RuntimeException( "Solving w.r.t. Y currently only works when the top and bottom are made of a single function." ) ;
     	//Search for ".get( 0 )" below to see those places where we rely on this assumption.
@@ -191,8 +191,25 @@ public class AreaSolverByY extends Solver
         // ADDTOPVERTICALS and ADDBOTTOMVERTICALS from Paper
         //////////////////////////////////////////////////////////////////////
 
-        //TODO: all of this
-
+        for( Pair<Double,Double> p : topExtremaAndDir )
+        {
+        	if( p.getSecond() <= 0 )
+        	{
+	    		Double extremaX = p.getFirst() ;
+	    		Double extremaY = new Double( region.getTop().evaluateAtX( p.getFirst() ) ) ;
+	    		getVerticalSegmentFromTop( extremaX, extremaY, horizontals, region.getBottom(), verticals ) ;
+        	}
+        }
+        
+        for( Pair<Double,Double> p : botExtremaAndDir )
+        {
+        	if( p.getSecond() >= 0 )
+        	{
+	    		Double extremaX = p.getFirst() ;
+	    		Double extremaY = new Double( region.getBottom().evaluateAtX( p.getFirst() ) ) ;
+	    		getVerticalSegmentFromBottom( extremaX, extremaY, horizontals, region.getBottom(), verticals ) ;
+        	}
+        }
         
         //////////////////////////////////////////////////////////////////////
         // Collect all intersections from all horizontals and verticals
@@ -233,8 +250,8 @@ public class AreaSolverByY extends Solver
     
     private void getLeftRightBoundCommonYIntersections( double y, LeftRight lr, Vector<Point> intersections )
     {
-        if( 		Utilities.lessThanOrEqualDoubles( y, lr.getMaximum().getY() )
-            	&&	Utilities.greaterThanOrEqualDoubles( y, lr.getMinimum().getY() ) )
+        if( 	Utilities.lessThanOrEqualDoubles( y, lr.getMaximum().getY() )
+            &&	Utilities.greaterThanOrEqualDoubles( y, lr.getMinimum().getY() ) )
         {
         	Point pt = new Point( lr.getMaximum().getX(), y ) ;
         	if( ! intersections.contains( pt ) )
@@ -325,6 +342,7 @@ public class AreaSolverByY extends Solver
         for( Point p : intersections )
         {
         	if( 	Utilities.equalDoubles( y, p.getY() )
+        		&&	( ! Utilities.equalDoubles( beginX, p.getX() ) )
         		&&	comparisonFunc.test( new Pair<Double,Double>( p.getX(), firstNonExtremaIntersection ) )
         		&&	( ! Utilities.equalDoubles( p.getX(), firstNonExtremaIntersection ) )
         		&&	topExtremaAndDir.stream().filter( pair -> Utilities.equalDoubles( pair.getFirst(), p.getY() ) ).count() == 0
@@ -348,6 +366,68 @@ public class AreaSolverByY extends Solver
         	if( ! horizontals.contains( pts ) )
         		horizontals.add( pts ) ;
         }
+    }
+    
+    private void getVerticalSegmentFromTop( Double fromPointX, Double fromPointY,
+								            Vector<Pair<Point,Point>> horizontals,
+								            TopBottom oppositeBound,
+								            Vector<Pair<Point,Point>> verticals ) throws DomainException
+    {
+        Predicate<Pair<Double,Double>> greaterThan = p -> p.getFirst() > p.getSecond() ;
+    	getVerticalSegment( fromPointX, fromPointY, horizontals, oppositeBound, greaterThan, verticals ) ; 
+    }
+    
+    private void getVerticalSegmentFromBottom( Double fromPointX, Double fromPointY,
+								               Vector<Pair<Point,Point>> horizontals,
+								               TopBottom oppositeBound,
+								               Vector<Pair<Point,Point>> verticals ) throws DomainException
+	{
+		Predicate<Pair<Double,Double>> lessThan = p -> p.getFirst() < p.getSecond() ;
+		getVerticalSegment( fromPointX, fromPointY, horizontals, oppositeBound, lessThan, verticals ) ; 
+	}
+
+    private void getVerticalSegment( Double fromPointX, Double fromPointY,
+    		                         Vector<Pair<Point,Point>> horizontals,
+    		                         TopBottom oppositeBound,
+  								     Predicate<Pair<Double,Double>> comparisonFunc,
+			                         Vector<Pair<Point,Point>> verticals ) throws DomainException
+    {
+        Pair<Point,Point> closestIntersectingHorizontal = null ;
+        for( Pair<Point,Point> horizontal : horizontals )
+        {
+            if( 	Utilities.greaterThanOrEqualDoubles( fromPointX, horizontal.getFirst().getX() )
+                &&	Utilities.lessThanOrEqualDoubles( fromPointX, horizontal.getSecond().getX() ) )
+            {
+            	if( 	( closestIntersectingHorizontal == null )
+            		||	( comparisonFunc.test( new Pair<Double,Double>( horizontal.getFirst().getY(),
+            				                   closestIntersectingHorizontal.getFirst().getY() ) ) ) )
+            	{
+            		closestIntersectingHorizontal = horizontal ;
+            	}
+            }
+        }
+        
+        Double closestIntersectingY ;
+        if( closestIntersectingHorizontal != null )
+        {
+        	closestIntersectingY = closestIntersectingHorizontal.getFirst().getY() ;
+        }
+        else
+        {
+        	closestIntersectingY = new Double( oppositeBound.evaluateAtX( fromPointX ) ) ;
+        }
+
+    	Point a = new Point( fromPointX, fromPointY ) ;
+    	Point b = new Point( fromPointX, closestIntersectingY ) ;
+    	if( a.getY() < b.getY() )
+    	{
+    		Point t = a ;
+    		a = b ;
+    		b = t ;
+    	}
+    	Pair<Point,Point> pts = new Pair<Point,Point>( a, b ) ;
+    	if( ! verticals.contains( pts ) )
+    		verticals.add( pts ) ;
     }
 
     /**
