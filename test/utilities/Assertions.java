@@ -12,6 +12,13 @@ public class Assertions
         assert(Utilities.looseEqualDoubles(a, b));
     }
     
+    public static void Assert(boolean result)
+    {
+        if (!result) System.out.print("Expected true; acquired false.");
+
+        assert(result);
+    }
+    
     public static void Assert(boolean left, boolean right)
     {
         if (left != right)

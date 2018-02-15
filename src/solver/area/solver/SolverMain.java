@@ -5,31 +5,33 @@ import java.util.Vector;
 
 import exceptions.SolvingException;
 import representation.regions.Region;
+import solver.Main;
 import solver.area.AreaSolution;
 import solver.area.TextbookAreaProblem;
+import solver.area.parser.AreaProblemParser;
 import solver.area.parser.AreaProblemParserTest;
 import solver.area.regionComputer.RegionExtractor;
+import solver.problemRegions.ProblemRegionIdentifier;
 import utilities.Utilities;
 
 /**
  * Given basic string input, parse, solve, and return a RegionAggregator
  */
-public class SolverInterface
+public class SolverMain extends Main
 {
-    protected int _numProblems;
-    
-    public SolverInterface()
+    public SolverMain()
     {
-        _numProblems = 0;
+        super();
     }
 
     /**
      * @param sProblem -- String statement of a problem (defines a region with, possibly, domain)
      * Passes the problem onto the main solver.
      */
+    @Override
     public void solve(String sProblem)
     {
-        solve(AreaProblemParserTest.makeAreaProblem(sProblem));
+        solve(SolverMain.makeAreaProblem(sProblem));
     }
 
     public double solve(TextbookAreaProblem problem)
@@ -102,5 +104,19 @@ public class SolverInterface
         }
         
         return computedAnswerX;
+    }
+    
+    public static TextbookAreaProblem makeAreaProblem(String problemString)
+    {
+        AreaProblemParser parser = new AreaProblemParser(problemString);
+
+        if (parser.verify()) parser.parse();
+        else
+        {
+            System.err.println("Problem parse issue; not verified: |" + problemString + "|");
+        }
+
+        // Get the problem
+        return parser.getProblem();
     }
 }

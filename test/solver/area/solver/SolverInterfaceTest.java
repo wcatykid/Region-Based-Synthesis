@@ -115,7 +115,7 @@ public class SolverInterfaceTest
 
         TextbookAreaProblem problem = AreaProblemParserTest.makeAreaProblem(pStr);
 
-        SolverInterface solver = new SolverInterface();
+        SolverMain solver = new SolverMain();
 
         double answer = solver.solve(problem);
 

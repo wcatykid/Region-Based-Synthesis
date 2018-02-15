@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import representation.bounds.functions.Domain;
 import representation.regions.Region;
-import solver.area.TextbookAreaProblem;
+import solver.TextbookProblem;
 import solver.area.regionComputer.calculator.FacetCalculator;
 import solver.area.regionComputer.calculator.elements.MinimalCycle;
 import solver.area.regionComputer.calculator.elements.Primitive;
@@ -23,7 +23,7 @@ import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
 public class RegionExtractor
 {
     // The problem we are acting on
-    protected TextbookAreaProblem _problem;
+    protected TextbookProblem _problem;
 
     // Facets extracted from analysis
     protected ArrayList<Primitive> _primitives;
@@ -43,7 +43,7 @@ public class RegionExtractor
     protected Domain _domain;
     public Domain getDeducedDomain() { return _domain; }
 
-    public RegionExtractor(TextbookAreaProblem tap)
+    public RegionExtractor(TextbookProblem tap)
     {
         _problem = tap;
         _regions = null;

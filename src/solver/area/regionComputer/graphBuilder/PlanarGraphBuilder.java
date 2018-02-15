@@ -9,7 +9,7 @@ import math.analysis.intersection.Intersection;
 import representation.Point;
 import representation.bounds.functions.Domain;
 import representation.bounds.functions.StringBasedFunction;
-import solver.area.TextbookAreaProblem;
+import solver.TextbookProblem;
 import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
@@ -52,9 +52,9 @@ public class PlanarGraphBuilder
     protected PlanarGraph<NodePointT, PlanarEdgeAnnotation> _graph;
     public PlanarGraph<NodePointT, PlanarEdgeAnnotation> getGraph() { return _graph; }
 
-    public PlanarGraphBuilder(TextbookAreaProblem tap)
+    public PlanarGraphBuilder(TextbookProblem tp)
     {
-        this(tap.getFunctions(), tap.getDomain());
+        this(tp.getFunctions(), tp.getDomain());
     }
 
     public PlanarGraphBuilder(StringBasedFunction[] functions)

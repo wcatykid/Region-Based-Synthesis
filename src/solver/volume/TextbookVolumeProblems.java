@@ -15,6 +15,8 @@ public class TextbookVolumeProblems extends TextbookProblem
     protected ArrayList<AxisOfRevolution> _axes; // One region might have several axes specified with the problem
     protected ArrayList<Double> _answers;        // Parallel: corresponding answers to the n problems
 
+    public int numProblems() { return _axes.size(); }
+    
     /**
      * @param index -- position of desired problem
      * @return the corresponding pair <axis, answer>

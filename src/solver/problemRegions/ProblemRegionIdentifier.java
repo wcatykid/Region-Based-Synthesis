@@ -1,4 +1,4 @@
-package solver.area.solver;
+package solver.problemRegions;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,7 +7,7 @@ import java.util.Vector;
 import representation.bounds.functions.Domain;
 import representation.bounds.functions.StringBasedFunction;
 import representation.regions.Region;
-import solver.area.TextbookAreaProblem;
+import solver.TextbookProblem;
 import utilities.Assertions;
 
 /**
@@ -23,7 +23,7 @@ public class ProblemRegionIdentifier
     protected Domain _domain;
     protected boolean domainSpecified() { return _domain != null; }
 
-    public ProblemRegionIdentifier(TextbookAreaProblem tap) { this(tap.getFunctions(), tap.getDomain()); }
+    public ProblemRegionIdentifier(TextbookProblem tp) { this(tp.getFunctions(), tp.getDomain()); }
     public ProblemRegionIdentifier(StringBasedFunction[] functions) { this(functions, null); }
     public ProblemRegionIdentifier(StringBasedFunction[] functions, Domain domain)
     {
@@ -31,7 +31,7 @@ public class ProblemRegionIdentifier
        _domain = domain;
     }
 
-    protected Set<Region> getProblemRegions(Vector<Region> inRegions)
+    public Set<Region> getProblemRegions(Vector<Region> inRegions)
     {
         //
         // If the domain has not been dictacted, we seek all uniquely defined regions as solution regions

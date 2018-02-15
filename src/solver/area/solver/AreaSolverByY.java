@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 
 import exceptions.DomainException;
 import exceptions.RepresentationException;
+import math.analysis.derivatives.Derivatives;
 import math.analysis.extrema.ExtremeValues;
 import math.analysis.intersection.Intersection;
 import math.integral.DefiniteIntegral;
@@ -218,7 +219,7 @@ public class AreaSolverByY extends Solver
     	pts.add( leftBound ) ;
     	pts.add( rightBound ) ;
         
-    	Vector<Double> slopes = ExtremeValues.getInstance().firstDerivativeAtPoints( region.getBounds().get( 0 ), pts ) ;
+    	Vector<Double> slopes = Derivatives.getInstance().firstDerivativeAtPoints( region.getBounds().get( 0 ), pts ) ;
 
     	if( slopes.size() != 2 )
     		throw new RuntimeException( "Retrieving slopes of function at two points did not return two slopes." ) ;
@@ -232,7 +233,7 @@ public class AreaSolverByY extends Solver
         
     	Vector<Double> extrema = new Vector<Double>( ExtremeValues.getInstance().extrema( region.getBounds().get( 0 ), leftBound, rightBound ) ) ;
         Collections.sort( extrema ) ;
-    	Vector<Double> extremaDir = ExtremeValues.getInstance().secondDerivativeAtPoints( region.getBounds().get( 0 ), extrema ) ;
+    	Vector<Double> extremaDir = Derivatives.getInstance().secondDerivativeAtPoints( region.getBounds().get( 0 ), extrema ) ;
     	
     	if( extrema.size() != extremaDir.size() )
     		throw new RuntimeException( "Retrieving concavity of function at extrema did not return 1 and only 1 value for each extrema." ) ;
