@@ -4,19 +4,20 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import exceptions.DomainException;
 import exceptions.SolvingException;
 import representation.regions.Region;
 import solver.area.AreaSolution;
 
 public abstract class Solver
 {
-   public abstract Solution solve(Region region);
+   public abstract Solution solve(Region region) throws DomainException ;
    
    /**
     * @param regions -- a set of solvable regions
     * @return the solution of all regions appended together by X or Y (since this is inheritable)
     */
-   public Solution solve(Set<Region> regions) throws SolvingException
+   public Solution solve(Set<Region> regions) throws SolvingException, DomainException
    {
        AreaSolution overallSolution = new AreaSolution();
 
@@ -36,7 +37,7 @@ public abstract class Solver
     * @param regions -- a set of solvable regions
     * @return the solution of all regions appended together by X or Y (since this is inheritable)
     */
-   public Solution solve(Vector<Region> regions) throws SolvingException
+   public Solution solve(Vector<Region> regions) throws SolvingException, DomainException
    {
        Set<Region> set = new HashSet<Region>(regions);
        

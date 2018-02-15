@@ -3,6 +3,7 @@ package solver.area.solver;
 import java.util.Set;
 import java.util.Vector;
 
+import exceptions.DomainException;
 import exceptions.SolvingException;
 import representation.regions.Region;
 import solver.Main;
@@ -27,14 +28,14 @@ public class SolverMain extends Main
     /**
      * @param sProblem -- String statement of a problem (defines a region with, possibly, domain)
      * Passes the problem onto the main solver.
+     * @throws DomainException 
      */
-    @Override
-    public void solve(String sProblem)
+    public void solve(String sProblem) throws DomainException
     {
         solve(SolverMain.makeAreaProblem(sProblem));
     }
 
-    public double solve(TextbookAreaProblem problem)
+    public double solve(TextbookAreaProblem problem) throws DomainException
     {
         // we track the number of problems we have solved
         _numProblems++;

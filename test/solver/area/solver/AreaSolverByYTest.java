@@ -3,6 +3,8 @@ package solver.area.solver;
 import java.util.Set;
 import java.util.Vector;
 import org.junit.Test;
+
+import exceptions.DomainException;
 import exceptions.SolvingException;
 import representation.regions.Region;
 import solver.area.AreaSolution;
@@ -17,7 +19,7 @@ import utilities.StringUtilities;
 public class AreaSolverByYTest
 {
     @Test
-    public void test()
+    public void test() throws DomainException
     {
         String testName = "Region Creation w.r.t. Y (for solving with Y)";
 
@@ -33,7 +35,7 @@ public class AreaSolverByYTest
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
 
-    private void testSingleBottom(int indent)
+    private void testSingleBottom(int indent) throws DomainException
     {
         String testName = "Inverted Region Single-Bound Bottoms";
 
@@ -48,7 +50,7 @@ public class AreaSolverByYTest
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
 
-    private void testDualBottoms(int indent)
+    private void testDualBottoms(int indent) throws DomainException
     {
         String testName = "Inverted Region Single-Bound Bottoms";
 
@@ -59,7 +61,7 @@ public class AreaSolverByYTest
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
     
-    private void testTriBottoms(int indent)
+    private void testTriBottoms(int indent) throws DomainException
     {
         String testName = "Inverted Region Single-Bound Bottoms";
 
@@ -80,7 +82,7 @@ public class AreaSolverByYTest
     }
 
     //All of these came from testTriBottoms
-    private void stillArentWorking(int indent)
+    private void stillArentWorking(int indent) throws DomainException
     {
         String testName = "Ones that still aren't working";
 
@@ -102,7 +104,7 @@ public class AreaSolverByYTest
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
     
-    private void runProblem(int indent, String pStr)
+    private void runProblem(int indent, String pStr) throws DomainException
     {
         System.out.println(StringUtilities.generateTestStartString(pStr, indent));
 
