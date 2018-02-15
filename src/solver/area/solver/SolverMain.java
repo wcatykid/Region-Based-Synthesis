@@ -10,7 +10,6 @@ import solver.Main;
 import solver.area.AreaSolution;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParser;
-import solver.area.parser.AreaProblemParserTest;
 import solver.area.regionComputer.RegionExtractor;
 import solver.problemRegions.ProblemRegionIdentifier;
 import utilities.Utilities;

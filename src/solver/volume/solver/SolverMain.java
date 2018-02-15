@@ -3,6 +3,7 @@ package solver.volume.solver;
 import java.util.Set;
 import java.util.Vector;
 
+import exceptions.DomainException;
 import exceptions.SolvingException;
 import representation.regions.Region;
 import solver.Main;
@@ -36,7 +37,7 @@ public class SolverMain extends Main
      * @param sProblem -- String statement of a problem (defines a region with, possibly, domain)
      * Passes the problem onto the main solver.
      */
-    public void solve(String sProblem)
+    public void solve(String sProblem) throws DomainException
     {
         solve(SolverMain.makeVolumeProblem(sProblem));
     }
@@ -99,17 +100,18 @@ public class SolverMain extends Main
             SolveByDiscs solver = null;
             double computed = -1;
 
-            try
-            {
-                solver = new SolveByDiscs(regions, axis);
-
-                computed = solver.solve();
-            }
-            catch (SolvingException e)
-            {
-                System.err.println("Failed to solve by X with Discs");
-                e.printStackTrace();
-            }
+// CTA: Supporting compilation
+//            try
+//            {
+//                solver = new SolveByDiscs(regions, axis);
+//
+//                computed = solver.solve();
+//            }
+//            catch (SolvingException e)
+//            {
+//                System.err.println("Failed to solve by X with Discs");
+//                e.printStackTrace();
+//            }
 
             //
             // Compare expected and computed
@@ -127,31 +129,32 @@ public class SolverMain extends Main
         //
         else if (axis.isVertical())
         {
-            SolveByShells solver = null;
-            double computed = -1;
-
-            try
-            {
-                solver = new SolveByShells(regions, axis);
-
-                computed = solver.solve();
-            }
-            catch (SolvingException e)
-            {
-                System.err.println("Failed to solve by X with Shells");
-                e.printStackTrace();
-            }
-
-            //
-            // Compare expected and computed
-            //
-            if (!Utilities.looseEqualDoubles(computed,  answer))
-            {
-                System.err.println("Computed answer does not equate to real answer: computed(" +
-                        computed + ") Expected (" + answer + ")");
-            }
-
-            //        return computed;
+// CTA: Mark to support compilation
+//            SolveByShells solver = null;
+//            double computed = -1;
+//
+//            try
+//            {
+//                solver = new SolveByShells(regions, axis);
+//
+//                computed = solver.solve();
+//            }
+//            catch (SolvingException e)
+//            {
+//                System.err.println("Failed to solve by X with Shells");
+//                e.printStackTrace();
+//            }
+//
+//            //
+//            // Compare expected and computed
+//            //
+//            if (!Utilities.looseEqualDoubles(computed,  answer))
+//            {
+//                System.err.println("Computed answer does not equate to real answer: computed(" +
+//                        computed + ") Expected (" + answer + ")");
+//            }
+//
+//            //        return computed;
         }
         //
         // For safety
