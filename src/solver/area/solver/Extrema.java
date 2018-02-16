@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import representation.regions.TopBottom;
+import math.analysis.derivatives.Derivatives;
 import math.analysis.extrema.ExtremeValues;
 
 public class Extrema
@@ -36,7 +37,7 @@ public class Extrema
         
     	Vector<Double> extrema = new Vector<Double>( ExtremeValues.getInstance().extrema( region.getBounds().get( 0 ), leftBound, rightBound ) ) ;
         Collections.sort( extrema ) ;
-    	Vector<Double> extremaDir = ExtremeValues.getInstance().secondDerivativeAtPoints( region.getBounds().get( 0 ), extrema ) ;
+    	Vector<Double> extremaDir = Derivatives.getInstance().secondDerivativeAtPoints( region.getBounds().get( 0 ), extrema ) ;
     	
     	if( extrema.size() != extremaDir.size() )
     		throw new RuntimeException( "Retrieving concavity of function at extrema did not return 1 and only 1 value for each extrema." ) ;
