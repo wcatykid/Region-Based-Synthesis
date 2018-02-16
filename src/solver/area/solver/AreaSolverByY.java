@@ -1,16 +1,13 @@
 package solver.area.solver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import exceptions.DomainException;
 import exceptions.RepresentationException;
 import math.analysis.extrema.ExtremeValues;
 import math.analysis.intersection.Intersection;
-import math.external_interface.LocalMathematicaCasInterface;
 import math.integral.DefiniteIntegral;
 import representation.Point;
 import representation.bounds.Bound;
@@ -25,6 +22,10 @@ import representation.regions.TopBottom;
 import solver.Solution;
 import solver.Solver;
 import solver.area.AreaSolution;
+import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;
+import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
+import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
+import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraphPoint;
 import utilities.Pair;
 import utilities.Utilities;
 
@@ -65,7 +66,8 @@ public class AreaSolverByY extends Solver
     {
     	if( 	( region.getTop   ().getBounds().size() != 1 )
     		||	( region.getBottom().getBounds().size() != 1 ) )
-    		throw new RuntimeException( "Solving w.r.t. Y currently only works when the top and bottom are made of a single function." ) ;
+    		throw new RuntimeException( "Solving w.r.t. Y currently"
+    				+ " only works when the top and bottom are made of a single function." ) ;
     	//Search for ".get( 0 )" below to see those places where we rely on this assumption.
     	
         //Need these so that various sub-algorithms don't attempt to calculate to infinity
@@ -73,13 +75,13 @@ public class AreaSolverByY extends Solver
         Double rightBound = region.getRight().getMaximum().getX() ;
 
         //For storing line segments used to create sub-regions.
-        Vector<Pair<Point,Point>> horizontals = new Vector<Pair<Point,Point>>() ;
-        Vector<Pair<Point,Point>> verticals   = new Vector<Pair<Point,Point>>() ;
+        HorizontalLineList horizontals = new HorizontalLineList() ;
+        VerticalLineList   verticals   = new VerticalLineList  () ;
         
         //Find all internal maxima and minima of top and bottom functions (and their associated second derivative)
         //We need these for all of DISECTLEFT, DISECTRIGHT, DISECTTOP, DISECTBOTTOM, ADDTOPVERTICALS, and ADDBOTTOMVERTICALS
-        Vector<Pair<Double,Double>> topExtremaAndDir = getExtremaAndDir( region.getTop   (), leftBound, rightBound ) ;
-        Vector<Pair<Double,Double>> botExtremaAndDir = getExtremaAndDir( region.getBottom(), leftBound, rightBound ) ;
+        ArrayList<Extrema> topExtrema = Extrema.getExtrema( region.getTop   (), leftBound, rightBound ) ;
+        ArrayList<Extrema> botExtrema = Extrema.getExtrema( region.getBottom(), leftBound, rightBound ) ;
 
         //////////////////////////////////////////////////////////////////////
         // DISECTLEFT and DISECTRIGHT from Paper
@@ -91,147 +93,291 @@ public class AreaSolverByY extends Solver
         //This is used to store all intersections between the line defined by the y components of the left and right bounds
         // and the top and bottom functions.  The horizontal line segments we need to collect for DISECTLEFT and DISECTRIGHT
         // will start or end at these points.
-        Vector<Point> allCornerIntersections = new Vector<Point>() ;
+        ArrayList<FunctionIntersection> allIntersections = new ArrayList<FunctionIntersection>() ;
+
+        addPointToIntersectionList( allIntersections, new FunctionIntersection(
+        		region.getLeft().getMaximum(), FunctionIntersection.Function.Top ) ) ;
+        addPointToIntersectionList( allIntersections, new FunctionIntersection(
+        		region.getLeft().getMinimum(), FunctionIntersection.Function.Bottom ) ) ;
+        addPointToIntersectionList( allIntersections, new FunctionIntersection(
+        		region.getRight().getMaximum(), FunctionIntersection.Function.Top ) ) ;
+        addPointToIntersectionList( allIntersections, new FunctionIntersection(
+        		region.getRight().getMinimum(), FunctionIntersection.Function.Bottom ) ) ;
 
         if( slopesAtTopBounds.getFirst() >= 0 ) //If the top function at the left is increasing
         {
-            StringBasedFunction leftTopHorizontal  = new StringBasedFunction( new Double( region.getLeft ().getMaximum().getY() ).toString() ) ;
-            addPointToIntersectionList( region.getLeft().getMaximum(), allCornerIntersections ) ;
-            getLeftRightBoundCommonYIntersections( region.getLeft().getMaximum().getY(), region.getRight(), allCornerIntersections ) ;
-            getLeftRightBoundTopBottomCommonYIntersections( region, leftBound, rightBound, leftTopHorizontal, allCornerIntersections ) ;
+            StringBasedFunction leftTopHorizontal = new StringBasedFunction(
+            		new Double( region.getLeft ().getMaximum().getY() ).toString() ) ;
+            getLeftRightBoundCommonYIntersections( region.getLeft().getMaximum().getY(),
+            		region.getRight(), FunctionIntersection.Function.Top, allIntersections ) ;
+            getLeftRightBoundTopBottomCommonYIntersections( region,
+            		leftBound, rightBound, leftTopHorizontal, allIntersections ) ;
         }
 
         if( slopesAtBottomBounds.getFirst() <= 0 ) //If the bottom function at the left is decreasing
         {
-            StringBasedFunction leftBotHorizontal  = new StringBasedFunction( new Double( region.getLeft ().getMinimum().getY() ).toString() ) ;
-            addPointToIntersectionList( region.getLeft().getMinimum(), allCornerIntersections ) ;
-        	getLeftRightBoundCommonYIntersections( region.getLeft().getMinimum().getY(), region.getRight(), allCornerIntersections ) ;
-        	getLeftRightBoundTopBottomCommonYIntersections( region, leftBound, rightBound, leftBotHorizontal, allCornerIntersections ) ;
+            StringBasedFunction leftBotHorizontal  = new StringBasedFunction(
+            		new Double( region.getLeft ().getMinimum().getY() ).toString() ) ;
+        	getLeftRightBoundCommonYIntersections( region.getLeft().getMinimum().getY(),
+        			region.getRight(), FunctionIntersection.Function.Bottom, allIntersections ) ;
+        	getLeftRightBoundTopBottomCommonYIntersections( region,
+        			leftBound, rightBound, leftBotHorizontal, allIntersections ) ;
         }
         
         if( slopesAtTopBounds.getSecond() <= 0 ) //If the top function at the right is decreasing
         {
-            StringBasedFunction rightTopHorizontal = new StringBasedFunction( new Double( region.getRight().getMaximum().getY() ).toString() ) ;
-            addPointToIntersectionList( region.getRight().getMaximum(), allCornerIntersections ) ;
-	        getLeftRightBoundCommonYIntersections( region.getRight().getMaximum().getY(), region.getLeft(), allCornerIntersections ) ;
-	        getLeftRightBoundTopBottomCommonYIntersections( region, leftBound, rightBound, rightTopHorizontal, allCornerIntersections ) ;
+            StringBasedFunction rightTopHorizontal = new StringBasedFunction(
+            		new Double( region.getRight().getMaximum().getY() ).toString() ) ;
+	        getLeftRightBoundCommonYIntersections( region.getRight().getMaximum().getY(),
+	        		region.getLeft(), FunctionIntersection.Function.Top, allIntersections ) ;
+	        getLeftRightBoundTopBottomCommonYIntersections( region,
+	        		leftBound, rightBound, rightTopHorizontal, allIntersections ) ;
         }
         
         if( slopesAtBottomBounds.getSecond() >= 0 ) //If the bottom function at the right is increasing
         {
-            StringBasedFunction rightBotHorizontal = new StringBasedFunction( new Double( region.getRight().getMinimum().getY() ).toString() ) ;
-            addPointToIntersectionList( region.getRight().getMinimum(), allCornerIntersections ) ;
-        	getLeftRightBoundCommonYIntersections( region.getRight().getMinimum().getY(), region.getLeft(), allCornerIntersections ) ;
-        	getLeftRightBoundTopBottomCommonYIntersections( region, leftBound, rightBound, rightBotHorizontal, allCornerIntersections ) ;
+            StringBasedFunction rightBotHorizontal = new StringBasedFunction(
+            		new Double( region.getRight().getMinimum().getY() ).toString() ) ;
+        	getLeftRightBoundCommonYIntersections( region.getRight().getMinimum().getY(),
+        			region.getLeft(), FunctionIntersection.Function.Bottom, allIntersections ) ;
+        	getLeftRightBoundTopBottomCommonYIntersections( region,
+        			leftBound, rightBound, rightBotHorizontal, allIntersections ) ;
         }
         
         if( slopesAtTopBounds.getFirst() >= 0 ) //If the top function at the left is increasing
         {   //Get the horizontal segment going from the top left to the right
-        	getHorizontalSegmentToTheRightOf( topExtremaAndDir, botExtremaAndDir, allCornerIntersections,
-	        	leftBound, rightBound, region.getLeft().getMaximum().getY(), horizontals ) ;
+        	horizontals.add( HorizontalLine.getHorizontalLineToTheRightOf( topExtrema, botExtrema,
+        			allIntersections, leftBound, rightBound, region.getLeft().getMaximum().getY() ) ) ;
         }
         
         if( slopesAtBottomBounds.getFirst() <= 0 ) //If the bottom function at the left is decreasing
         {	//Get the horizontal segment going from the bottom left to the right
         	//Note that this is redundant (but not problematically) if the left bound is a point, not a line.
-        	getHorizontalSegmentToTheRightOf( topExtremaAndDir, botExtremaAndDir, allCornerIntersections,
-        			leftBound, rightBound, region.getLeft().getMinimum().getY(), horizontals ) ;
+        	horizontals.add( HorizontalLine.getHorizontalLineToTheRightOf( topExtrema, botExtrema,
+        			allIntersections, leftBound, rightBound, region.getLeft().getMinimum().getY() ) ) ;
         }
 
         if( slopesAtTopBounds.getSecond() <= 0 ) //If the top function at the right is decreasing
         {	//Get the horizontal segment going from the top right to the left
-        	getHorizontalSegmentToTheLeftOf( topExtremaAndDir, botExtremaAndDir, allCornerIntersections, 
-        			rightBound, leftBound, region.getRight().getMaximum().getY(), horizontals ) ;
+        	horizontals.add( HorizontalLine.getHorizontalLineToTheLeftOf( topExtrema, botExtrema,
+        			allIntersections, rightBound, leftBound, region.getRight().getMaximum().getY() ) ) ;
         }
         
         if( slopesAtBottomBounds.getSecond() >= 0 ) //If the bottom function at the right is increasing
         {	//Get the horizontal segment going from the bottom right to the left
         	//Note that this is redundant (but not problematically) if the right bound is a point, not a line.
-        	getHorizontalSegmentToTheLeftOf( topExtremaAndDir, botExtremaAndDir, allCornerIntersections, 
-        			rightBound, leftBound, region.getRight().getMinimum().getY(), horizontals ) ;
+        	horizontals.add( HorizontalLine.getHorizontalLineToTheLeftOf( topExtrema, botExtrema,
+        			allIntersections, rightBound, leftBound, region.getRight().getMinimum().getY() ) ) ;
         }
         
         //////////////////////////////////////////////////////////////////////
         // DISECTTOP and DISECTBOTTOM from Paper
         //////////////////////////////////////////////////////////////////////
         
-        for( Pair<Double,Double> p : topExtremaAndDir )
+        for( Extrema p : topExtrema )
         {
-        	if( p.getSecond() >= 0 )
+        	if( p.getType() == Extrema.Type.Min )
         	{
-        		Double extremaX = p.getFirst() ;
-        		Double extremaY = new Double( region.getTop().evaluateAtX( p.getFirst() ) ) ;
-                Vector<Point> extremaIntersections = new Vector<Point>() ;
+        		Double extremaX = p.getValue() ;
+        		Double extremaY = new Double( region.getTop().evaluateAtX( p.getValue() ) ) ;
+        		ArrayList<FunctionIntersection> extremaIntersections = new ArrayList<FunctionIntersection>() ;
                 StringBasedFunction horizontal = new StringBasedFunction( extremaY.toString() ) ;
-            	getLeftRightBoundCommonYIntersections( extremaY, region.getLeft(), extremaIntersections ) ;
-            	getLeftRightBoundCommonYIntersections( extremaY, region.getRight(), extremaIntersections ) ;
-            	getLeftRightBoundTopBottomCommonYIntersections( region, leftBound, rightBound, horizontal, extremaIntersections ) ;
-            	getHorizontalSegmentToTheRightOf( topExtremaAndDir, botExtremaAndDir, extremaIntersections, extremaX, rightBound, extremaY, horizontals ) ;
-            	getHorizontalSegmentToTheLeftOf ( topExtremaAndDir, botExtremaAndDir, extremaIntersections, extremaX, leftBound , extremaY, horizontals ) ;
+            	getLeftRightBoundCommonYIntersections( extremaY,
+            			region.getLeft(), FunctionIntersection.Function.Neither, extremaIntersections ) ;
+            	getLeftRightBoundCommonYIntersections( extremaY,
+            			region.getRight(), FunctionIntersection.Function.Neither, extremaIntersections ) ;
+            	getLeftRightBoundTopBottomCommonYIntersections( region,
+            			leftBound, rightBound, horizontal, extremaIntersections ) ;
+            	horizontals.add( HorizontalLine.getHorizontalLineToTheRightOf( topExtrema, botExtrema,
+            			extremaIntersections, extremaX, rightBound, extremaY ) ) ;
+            	horizontals.add( HorizontalLine.getHorizontalLineToTheLeftOf ( topExtrema, botExtrema,
+            			extremaIntersections, extremaX, leftBound , extremaY ) ) ;
+            	addPointToIntersectionList( allIntersections, new FunctionIntersection(
+            			new Point( extremaX, extremaY ), FunctionIntersection.Function.Top ) ) ;
+            	addIntersectionListToIntersectionList( allIntersections, extremaIntersections ) ;
         	}
         }
         
-        for( Pair<Double,Double> p : botExtremaAndDir )
+        for( Extrema p : botExtrema )
         {
-        	if( p.getSecond() <= 0 )
+        	if( p.getType() == Extrema.Type.Max )
         	{
-        		Double extremaX = p.getFirst() ;
-        		Double extremaY = new Double( region.getBottom().evaluateAtX( p.getFirst() ) ) ;
-                Vector<Point> extremaIntersections = new Vector<Point>() ;
+        		Double extremaX = p.getValue() ;
+        		Double extremaY = new Double( region.getBottom().evaluateAtX( p.getValue() ) ) ;
+        		ArrayList<FunctionIntersection> extremaIntersections = new ArrayList<FunctionIntersection>() ;
                 StringBasedFunction horizontal = new StringBasedFunction( extremaY.toString() ) ;
-            	getLeftRightBoundCommonYIntersections( extremaY, region.getLeft(), extremaIntersections ) ;
-            	getLeftRightBoundCommonYIntersections( extremaY, region.getRight(), extremaIntersections ) ;
-            	getLeftRightBoundTopBottomCommonYIntersections( region, leftBound, rightBound, horizontal, extremaIntersections ) ;
-            	getHorizontalSegmentToTheRightOf( topExtremaAndDir, botExtremaAndDir, extremaIntersections, extremaX, rightBound, extremaY, horizontals ) ;
-            	getHorizontalSegmentToTheLeftOf ( topExtremaAndDir, botExtremaAndDir, extremaIntersections, extremaX, leftBound , extremaY, horizontals ) ;
-        	}
+            	getLeftRightBoundCommonYIntersections( extremaY,
+            			region.getLeft(), FunctionIntersection.Function.Neither, extremaIntersections ) ;
+            	getLeftRightBoundCommonYIntersections( extremaY,
+            			region.getRight(), FunctionIntersection.Function.Neither, extremaIntersections ) ;
+            	getLeftRightBoundTopBottomCommonYIntersections( region,
+            			leftBound, rightBound, horizontal, extremaIntersections ) ;
+            	horizontals.add( HorizontalLine.getHorizontalLineToTheRightOf( topExtrema, botExtrema,
+            			extremaIntersections, extremaX, rightBound, extremaY ) ) ;
+            	horizontals.add( HorizontalLine.getHorizontalLineToTheLeftOf ( topExtrema, botExtrema,
+            			extremaIntersections, extremaX, leftBound , extremaY ) ) ;
+            	addPointToIntersectionList( allIntersections, new FunctionIntersection(
+            			new Point( extremaX, extremaY ), FunctionIntersection.Function.Bottom ) ) ;
+            	addIntersectionListToIntersectionList( allIntersections, extremaIntersections ) ;
+        	 }
         }
 
         //////////////////////////////////////////////////////////////////////
         // ADDTOPVERTICALS and ADDBOTTOMVERTICALS from Paper
         //////////////////////////////////////////////////////////////////////
 
-        for( Pair<Double,Double> p : topExtremaAndDir )
+        for( Extrema p : topExtrema )
         {
-        	if( p.getSecond() <= 0 )
+        	if( p.getType() == Extrema.Type.Max )
         	{
-	    		Double extremaX = p.getFirst() ;
-	    		Double extremaY = new Double( region.getTop().evaluateAtX( p.getFirst() ) ) ;
-	    		getVerticalSegmentFromTop( extremaX, extremaY, horizontals, region.getBottom(), verticals ) ;
+	    		Double extremaX = p.getValue() ;
+	    		Double extremaY = new Double( region.getTop().evaluateAtX( p.getValue() ) ) ;
+	    		verticals.add( VerticalLine.getVerticalLineFromTop(
+	    				extremaX, extremaY, horizontals, region.getBottom() ) ) ;
+	            addPointToIntersectionList( allIntersections, new FunctionIntersection(
+	            		new Point( extremaX, extremaY ), FunctionIntersection.Function.Top ) ) ;
         	}
         }
         
-        for( Pair<Double,Double> p : botExtremaAndDir )
+        for( Extrema p : botExtrema )
         {
-        	if( p.getSecond() >= 0 )
+        	if( p.getType() == Extrema.Type.Min )
         	{
-	    		Double extremaX = p.getFirst() ;
-	    		Double extremaY = new Double( region.getBottom().evaluateAtX( p.getFirst() ) ) ;
-	    		getVerticalSegmentFromBottom( extremaX, extremaY, horizontals, region.getBottom(), verticals ) ;
+	    		Double extremaX = p.getValue() ;
+	    		Double extremaY = new Double( region.getBottom().evaluateAtX( p.getValue() ) ) ;
+	    		verticals.add( VerticalLine.getVerticalLineFromBottom(
+	    				extremaX, extremaY, horizontals, region.getBottom() ) ) ;
+	            addPointToIntersectionList( allIntersections, new FunctionIntersection(
+	            		new Point( extremaX, extremaY ), FunctionIntersection.Function.Bottom ) ) ;
         	}
         }
         
-        //////////////////////////////////////////////////////////////////////
-        // Collect all intersections from all horizontals and verticals
-        //////////////////////////////////////////////////////////////////////
-        Vector<Point> finalIntersections = new Vector<Point>() ;
-        for( Pair<Point,Point> p : horizontals )
-        {
-        	addPointToIntersectionList( p.getFirst() , finalIntersections ) ;
-        	addPointToIntersectionList( p.getSecond(), finalIntersections ) ;
-        }
-
-        for( Pair<Point,Point> p : verticals )
-        {
-        	addPointToIntersectionList( p.getFirst() , finalIntersections ) ;
-        	addPointToIntersectionList( p.getSecond(), finalIntersections ) ;
-        }
-
         //////////////////////////////////////////////////////////////////////
         // COMPUTE ALL SUBREGIONS
         //////////////////////////////////////////////////////////////////////
+
+        PlanarGraph<NodePointT,PlanarEdgeAnnotation> graph = new PlanarGraph<NodePointT,PlanarEdgeAnnotation>() ;
         
-        //TODO: all of this (which is still magic)
+        //For each horizontal line segment, compute all intersection points between it and top / bottom into a set I.
+        //* for each pair of points <j, j+1> \in I
+        //    * add edge <j, j+1> to P
+        for( HorizontalLine p : horizontals )
+        {
+        	double splitPoint = .0 ;
+    		boolean splitHorizontalInTwo = false ;
+        	for( VerticalLine p2 : verticals )
+        	{
+        		if( 	( 		Utilities.equalDoubles( p.getLeft().getY(), p2.getTop().getY() )
+        					||  Utilities.equalDoubles( p.getLeft().getY(), p2.getBottom().getY() ) )
+        			&&  ( p.getLeft().getX() < p2.getTop().getX() )
+        			&&	( p2.getTop().getX() < p.getRight().getX() ) )
+        		{ // This horizontal should be split in two where the vertical hits it. 
+        			splitHorizontalInTwo = true ;
+        			splitPoint = p2.getTop().getX() ; 
+        			break ;
+        		}
+        	}
+        	
+        	if( splitHorizontalInTwo )
+        	{
+        		addEdgeToGraph( graph, p.getLeft().getX(), p.getLeft().getY(), splitPoint         , p.getLeft() .getY() ) ;
+        		addEdgeToGraph( graph, splitPoint        , p.getLeft().getY(), p.getRight().getX(), p.getRight().getY() ) ;
+        	}
+        	else
+        	{
+        		addEdgeToGraph( graph, p.getLeft().getX(), p.getLeft().getY(), p.getRight().getX(), p.getRight().getY() ) ;
+        	}
+        }
+        
+        //For each vertical line segment, add an edge to P. (This is simple because verticals are very restricted.)
+        for( VerticalLine p : verticals )
+        {
+    		addEdgeToGraph( graph, p.getTop().getX(), p.getTop().getY(), p.getBottom().getX(), p.getBottom().getY() ) ;
+        }
+        
+        //TODO: tell Dr. Alvin about this added part
+        if( region.getLeft().isVertical() )
+        {
+            ArrayList<Double> leftBoundSplits  = new ArrayList<Double>() ;
+            for( HorizontalLine p : horizontals )
+            {
+            	if( 	Utilities.equalDoubles( p.getLeft().getX(), leftBound )
+            		&&	( p.getLeft().getY() < region.getLeft().getMaximum().getY() )
+            		&&	( p.getLeft().getY() > region.getLeft().getMinimum().getY() ) )
+            	{
+            		leftBoundSplits.add( p.getLeft().getY() ) ;
+            	}
+            }
+
+            Collections.sort( leftBoundSplits ) ;
+            Double lastPos = region.getLeft().getMinimum().getY() ;
+            for( Double y : leftBoundSplits )
+            {
+        		addEdgeToGraph( graph, leftBound, lastPos, leftBound, y ) ;
+                lastPos = y ;
+            }
+
+    		addEdgeToGraph( graph, leftBound, lastPos, leftBound, region.getLeft().getMaximum().getY() ) ;
+        }
+        
+        if( region.getRight().isVertical() )
+        {
+            ArrayList<Double> rightBoundSplits = new ArrayList<Double>() ;
+            for( HorizontalLine p : horizontals )
+            {
+            	if( 	Utilities.equalDoubles( p.getRight().getX(), rightBound )
+            		&&	( p.getRight().getY() < region.getRight().getMaximum().getY() )
+            		&&	( p.getRight().getY() > region.getRight().getMinimum().getY() ) )
+            	{
+            		rightBoundSplits.add( p.getRight().getY() ) ;
+            	}
+            }
+
+            Collections.sort( rightBoundSplits ) ;
+            Double lastPos = region.getRight().getMinimum().getY() ;
+            for( Double y : rightBoundSplits )
+            {
+        		addEdgeToGraph( graph, rightBound, lastPos, rightBound, y ) ;
+                lastPos = y ;
+            }
+
+    		addEdgeToGraph( graph, rightBound, lastPos, rightBound, region.getRight().getMaximum().getY() ) ;
+        }
+        
+        //For each function F in the top and bottom (Things get a bit more complicated here.)
+        //* compute all intersection points I with function F
+        //* add to I the endpoints of F in the region
+        //* for each pair of points <j, j+1> \in I
+        //    * add edge <j, j+1> to P
+        Collections.sort( allIntersections ) ; //Needed and relies on FunctionIntersection.compareTo
+        FunctionIntersection lastTop = null ;
+        FunctionIntersection lastBot = null ;
+        for( FunctionIntersection pt : allIntersections )
+        {
+        	if( pt.getFunction() == FunctionIntersection.Function.Top )
+        	{
+        		if( lastTop != null )
+        		{
+            		addEdgeToGraph( graph, lastTop.getPoint().getX(), lastTop.getPoint().getY(),
+            				pt.getPoint().getX(), pt.getPoint().getY() ) ;
+        		}
+
+    			lastTop = pt ;
+        	}
+
+        	if( pt.getFunction() == FunctionIntersection.Function.Bottom )
+        	{
+        		if( lastBot != null )
+        		{
+            		addEdgeToGraph( graph, lastBot.getPoint().getX(), lastBot.getPoint().getY(),
+            				pt.getPoint().getX(), pt.getPoint().getY() ) ;
+        		}
+
+    			lastBot = pt ;
+        	}
+        }
+            
+        //TODO: the rest of this (which is still magic)
         
         //////////////////////////////////////////////////////////////////////
         // INTEGRATE ALL SUB-REGIONS W.R.T y AND SUM
@@ -242,36 +388,48 @@ public class AreaSolverByY extends Solver
         return null ;
     }
     
-    private void addPointToIntersectionList( Point pt, Vector<Point> intersections )
+    private void addEdgeToGraph( PlanarGraph<NodePointT,PlanarEdgeAnnotation> graph, Double x1, Double y1, Double x2, Double y2 )
+    {
+        PlanarGraphPoint first  = new PlanarGraphPoint( null, x1, y1 ) ;
+        PlanarGraphPoint second = new PlanarGraphPoint( null, x2, y2 ) ;
+    	graph.addNode( first , NodePointT.INTERSECTION ) ;
+    	graph.addNode( second, NodePointT.INTERSECTION ) ;
+        graph.addUndirectedEdge( first, second, null ) ;
+    }
+    
+    private void addPointToIntersectionList( ArrayList<FunctionIntersection> intersections, FunctionIntersection pt )
     {
     	if( ! intersections.contains( pt ) )
     		intersections.add( pt ) ;
     }
     
-    private void getLeftRightBoundCommonYIntersections( double y, LeftRight lr, Vector<Point> intersections )
+    private void addIntersectionListToIntersectionList( ArrayList<FunctionIntersection> target, ArrayList<FunctionIntersection> source )
+    {
+    	for( FunctionIntersection pt : source )
+    		addPointToIntersectionList( target, pt ) ;
+    }
+    
+    private void getLeftRightBoundCommonYIntersections( double y, LeftRight lr,
+    		FunctionIntersection.Function function, ArrayList<FunctionIntersection> intersections )
     {
         if( 	Utilities.lessThanOrEqualDoubles( y, lr.getMaximum().getY() )
             &&	Utilities.greaterThanOrEqualDoubles( y, lr.getMinimum().getY() ) )
         {
-        	Point pt = new Point( lr.getMaximum().getX(), y ) ;
-        	if( ! intersections.contains( pt ) )
-        		intersections.add( pt ) ;
+        	addPointToIntersectionList( intersections, new FunctionIntersection( new Point( lr.getMaximum().getX(), y ), function ) ) ;
         }
     }
     
     private void getLeftRightBoundTopBottomCommonYIntersections( Region region,
-    		Double leftBound, Double rightBound, StringBasedFunction horizontal, Vector<Point> intersections )
+    		Double leftBound, Double rightBound, StringBasedFunction horizontal, ArrayList<FunctionIntersection> intersections )
     {
     	for( Point pt : Intersection.getInstance().allIntersections( region.getTop().getBounds().get( 0 ), horizontal, leftBound, rightBound ) )
     	{
-    		if( ! intersections.contains( pt ) )
-    			intersections.add( pt ) ;
+        	addPointToIntersectionList( intersections, new FunctionIntersection( pt, FunctionIntersection.Function.Top ) ) ;
     	}
         
     	for( Point pt : Intersection.getInstance().allIntersections( region.getBottom().getBounds().get( 0 ), horizontal, leftBound, rightBound ) )
     	{
-    		if( ! intersections.contains( pt ) )
-    			intersections.add( pt ) ;
+        	addPointToIntersectionList( intersections, new FunctionIntersection( pt, FunctionIntersection.Function.Bottom ) ) ;
     	}
     }
     
@@ -287,147 +445,6 @@ public class AreaSolverByY extends Solver
     		throw new RuntimeException( "Retrieving slopes of function at two points did not return two slopes." ) ;
     	
         return new Pair<Double,Double>( slopes.get( 0 ), slopes.get( 1 ) ) ;
-    }
-
-    private Vector<Pair<Double,Double>> getExtremaAndDir( TopBottom region, Double leftBound, Double rightBound )
-    {
-        Vector<Pair<Double,Double>> output = new Vector<Pair<Double,Double>>() ;
-        
-    	Vector<Double> extrema = new Vector<Double>( ExtremeValues.getInstance().extrema( region.getBounds().get( 0 ), leftBound, rightBound ) ) ;
-        Collections.sort( extrema ) ;
-    	Vector<Double> extremaDir = ExtremeValues.getInstance().secondDerivativeAtPoints( region.getBounds().get( 0 ), extrema ) ;
-    	
-    	if( extrema.size() != extremaDir.size() )
-    		throw new RuntimeException( "Retrieving concavity of function at extrema did not return 1 and only 1 value for each extrema." ) ;
-
-    	output.addAll( IntStream
-    	  .range( 0, extrema.size() )
-    	  .mapToObj( i -> new Pair<Double,Double>( extrema.get( i ), extremaDir.get( i ) ) )
-    	  .collect( Collectors.toList() ) ) ;
-        
-        return output ;
-    }
-    
-    private void getHorizontalSegmentToTheLeftOf( Vector<Pair<Double,Double>> topExtremaAndDir,
-												  Vector<Pair<Double,Double>> botExtremaAndDir,
-												  Vector<Point> intersections,
-												  Double beginX, Double endX, Double y,
-												  Vector<Pair<Point,Point>> horizontals )
-	{
-        Predicate<Pair<Double,Double>> greaterThan = p -> p.getFirst() > p.getSecond() ;
-    	getHorizontalSegment( topExtremaAndDir, botExtremaAndDir, intersections,
-    						  beginX, endX, y, greaterThan, horizontals ) ;
-	}
-    
-    private void getHorizontalSegmentToTheRightOf( Vector<Pair<Double,Double>> topExtremaAndDir,
-												   Vector<Pair<Double,Double>> botExtremaAndDir,
-												   Vector<Point> intersections,
-												   Double beginX, Double endX, Double y,
-												   Vector<Pair<Point,Point>> horizontals )
-	{
-		Predicate<Pair<Double,Double>> lessThan = p -> p.getFirst() < p.getSecond() ;
-		getHorizontalSegment( topExtremaAndDir, botExtremaAndDir, intersections,
-							  beginX, endX, y, lessThan, horizontals ) ;
-	}
-
-    private void getHorizontalSegment( Vector<Pair<Double,Double>> topExtremaAndDir,
-    								   Vector<Pair<Double,Double>> botExtremaAndDir,
-    								   Vector<Point> intersections,
-    								   Double beginX, Double endX, Double y,
-    								   Predicate<Pair<Double,Double>> comparisonFunc,
-    								   Vector<Pair<Point,Point>> horizontals )
-    {
-        Double firstNonExtremaIntersection = endX ;
-
-        for( Point p : intersections )
-        {
-        	if( 	Utilities.equalDoubles( y, p.getY() )
-        		&&	( ! Utilities.equalDoubles( beginX, p.getX() ) )
-        		&&	comparisonFunc.test( new Pair<Double,Double>( p.getX(), firstNonExtremaIntersection ) )
-        		&&	( ! Utilities.equalDoubles( p.getX(), firstNonExtremaIntersection ) )
-        		&&	topExtremaAndDir.stream().filter( pair -> Utilities.equalDoubles( pair.getFirst(), p.getY() ) ).count() == 0
-        		&&	botExtremaAndDir.stream().filter( pair -> Utilities.equalDoubles( pair.getFirst(), p.getY() ) ).count() == 0 )
-        	{
-        		firstNonExtremaIntersection = p.getX() ;
-        	}
-        }
-
-        if( ! Utilities.equalDoubles( endX, firstNonExtremaIntersection ) )
-        {
-        	Point a = new Point( beginX, y ) ;
-        	Point b = new Point( firstNonExtremaIntersection, y ) ;
-        	if( a.getX() > b.getX() )
-        	{
-        		Point t = a ;
-        		a = b ;
-        		b = t ;
-        	}
-        	Pair<Point,Point> pts = new Pair<Point,Point>( a, b ) ;
-        	if( ! horizontals.contains( pts ) )
-        		horizontals.add( pts ) ;
-        }
-    }
-    
-    private void getVerticalSegmentFromTop( Double fromPointX, Double fromPointY,
-								            Vector<Pair<Point,Point>> horizontals,
-								            TopBottom oppositeBound,
-								            Vector<Pair<Point,Point>> verticals ) throws DomainException
-    {
-        Predicate<Pair<Double,Double>> greaterThan = p -> p.getFirst() > p.getSecond() ;
-    	getVerticalSegment( fromPointX, fromPointY, horizontals, oppositeBound, greaterThan, verticals ) ; 
-    }
-    
-    private void getVerticalSegmentFromBottom( Double fromPointX, Double fromPointY,
-								               Vector<Pair<Point,Point>> horizontals,
-								               TopBottom oppositeBound,
-								               Vector<Pair<Point,Point>> verticals ) throws DomainException
-	{
-		Predicate<Pair<Double,Double>> lessThan = p -> p.getFirst() < p.getSecond() ;
-		getVerticalSegment( fromPointX, fromPointY, horizontals, oppositeBound, lessThan, verticals ) ; 
-	}
-
-    private void getVerticalSegment( Double fromPointX, Double fromPointY,
-    		                         Vector<Pair<Point,Point>> horizontals,
-    		                         TopBottom oppositeBound,
-  								     Predicate<Pair<Double,Double>> comparisonFunc,
-			                         Vector<Pair<Point,Point>> verticals ) throws DomainException
-    {
-        Pair<Point,Point> closestIntersectingHorizontal = null ;
-        for( Pair<Point,Point> horizontal : horizontals )
-        {
-            if( 	Utilities.greaterThanOrEqualDoubles( fromPointX, horizontal.getFirst().getX() )
-                &&	Utilities.lessThanOrEqualDoubles( fromPointX, horizontal.getSecond().getX() ) )
-            {
-            	if( 	( closestIntersectingHorizontal == null )
-            		||	( comparisonFunc.test( new Pair<Double,Double>( horizontal.getFirst().getY(),
-            				                   closestIntersectingHorizontal.getFirst().getY() ) ) ) )
-            	{
-            		closestIntersectingHorizontal = horizontal ;
-            	}
-            }
-        }
-        
-        Double closestIntersectingY ;
-        if( closestIntersectingHorizontal != null )
-        {
-        	closestIntersectingY = closestIntersectingHorizontal.getFirst().getY() ;
-        }
-        else
-        {
-        	closestIntersectingY = new Double( oppositeBound.evaluateAtX( fromPointX ) ) ;
-        }
-
-    	Point a = new Point( fromPointX, fromPointY ) ;
-    	Point b = new Point( fromPointX, closestIntersectingY ) ;
-    	if( a.getY() < b.getY() )
-    	{
-    		Point t = a ;
-    		a = b ;
-    		b = t ;
-    	}
-    	Pair<Point,Point> pts = new Pair<Point,Point>( a, b ) ;
-    	if( ! verticals.contains( pts ) )
-    		verticals.add( pts ) ;
     }
 
     /**
