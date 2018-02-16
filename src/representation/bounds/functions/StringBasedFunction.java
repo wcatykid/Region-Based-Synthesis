@@ -1,6 +1,7 @@
 package representation.bounds.functions;
 
 import math.analysis.inverses.Inverses;
+import math.analysis.monotonicity.Monotonicity;
 import math.external_interface.LocalMathematicaCasInterface;
 import representation.ComplexNumber;
 import representation.bounds.Bound;
@@ -31,6 +32,23 @@ public class StringBasedFunction extends BoundedFunction
         _inverse = null;
 
         if (f.contains("y"))  _variable = VariableT.Y;
+
+        checkVertical();
+    }
+
+    /**
+     * If this 'function' is a vertical line, set the domain and inverse relation
+     */
+    private void checkVertical()
+    {
+        if (isVertical())
+        {
+            // acquire the constant
+            double constant = Double.parseDouble(LocalMathematicaCasInterface.getInstance().query(getFunction()));
+
+            // Set it's domain as a single 'x'-value
+            setDomain(constant, constant);
+        }
     }
 
     /**
@@ -43,15 +61,44 @@ public class StringBasedFunction extends BoundedFunction
     @Override
     public boolean isHorizontal()
     {
+        if (_variable != VariableT.Y) return false;
+
         String result = LocalMathematicaCasInterface.getInstance().query(getFunction());
-        
+
         return !result.contains(_variable.toString());
     }
-    
+
+    @Override
+    public boolean isVertical()
+    {
+        if (_variable != VariableT.X) return false;
+
+        String result = LocalMathematicaCasInterface.getInstance().query(getFunction());
+
+        return !result.contains(_variable.toString());
+    }
+
     /**
      * To satisfy inheritance from the BoundedFunction class
      */
     public StringBasedFunction clone() { return new StringBasedFunction(getFunction()); }
+
+    /**
+     * Monotonicity is defined as being either entirely nonincreasing or nondecreasing over an interval.
+     * We test this using the first derivative never changing signs in the interval.
+     * 
+     * @return if this function is monotone over the specified domain
+     */
+    public boolean isMonotone()
+    {
+        return Monotonicity.getInstance().isMonotone(this, leftBoundX(), rightBoundX());
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////// Translations and Transformations //////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * When a new parameter is specified, we perform a complete re-computation of the String 
@@ -71,7 +118,7 @@ public class StringBasedFunction extends BoundedFunction
         {
             String replacement = "";
             String interior = "(x " + (this.h > 0 ? "-" : "+") + " " + Math.abs(this.h) + ")";
-            
+
             if (!Utilities.equalDoubles(this.b, 1) && Utilities.equalDoubles(this.h, 0)) replacement = "(" + this.b + "x)";
             else if (Utilities.equalDoubles(this.b, 1) && !Utilities.equalDoubles(this.h, 0)) replacement = interior;
             else if (!Utilities.equalDoubles(this.b, 1) && !Utilities.equalDoubles(this.h, 0))
@@ -89,7 +136,7 @@ public class StringBasedFunction extends BoundedFunction
         if (!Utilities.equalDoubles(this.a, 1)) _transformed = this.a + " (" + _transformed + ")";
 
         if (!Utilities.equalDoubles(this.k, 0)) _transformed += (this.k > 0 ? "+" : "-") + Math.abs(this.k);
-        
+
         // Since this function has been transformed, reset the inverse (so it needs to be recomputed on-demand).
         _inverse = null;
     }
@@ -142,6 +189,10 @@ public class StringBasedFunction extends BoundedFunction
     @Override
     public void reflectOverXandY() { super.reflectOverXandY(); transform(); }
 
+    /////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// Translations and Transformations (end) ///////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * @param x -- an x-value
      * @return f(x) for this function
@@ -159,10 +210,10 @@ public class StringBasedFunction extends BoundedFunction
     public ComplexNumber evaluateAtPointByY(double y)
     {
         StringBasedFunction inverse = (StringBasedFunction)inverse();
-        
+
         return LocalMathematicaCasInterface.getInstance().evaluateAtPoint(inverse.getFunction(), y);
     }
-    
+
     /**
      * @return the inverse of this function (computed using Mathematica)
      */
@@ -170,10 +221,10 @@ public class StringBasedFunction extends BoundedFunction
     public Bound inverse()
     {
         if (_inverse == null) _inverse = Inverses.getInstance().computeInverse(this);
-        
+
         return _inverse;
     }
-    
+
     /**
      * @param function -- a String-based function
      * @return whether the function contains an imaginary component: I in Mathematica refers to \sqrt{-1}
@@ -182,7 +233,7 @@ public class StringBasedFunction extends BoundedFunction
     {
         return getFunction().indexOf('I') != -1;
     }
-    
+
     @Override
     public boolean equals(Object obj)
     {

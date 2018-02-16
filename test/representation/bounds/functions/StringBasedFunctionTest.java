@@ -8,6 +8,44 @@ import utilities.StringUtilities;
 public class StringBasedFunctionTest
 {
     @Test
+    public void testHorizontal()
+    {
+        String testName = "String-based Function: Horizontal";
+
+        System.out.println(StringUtilities.generateTestStartString(testName, 0));
+
+        Assertions.Assert(new StringBasedFunction("y = 0").isHorizontal(), true);
+        Assertions.Assert(new StringBasedFunction("y = -1").isHorizontal(), true);
+        Assertions.Assert(new StringBasedFunction("y=-1").isHorizontal(), true);
+        Assertions.Assert(new StringBasedFunction("y=1").isHorizontal(), true);
+        Assertions.Assert(new StringBasedFunction("x = 0").isHorizontal(), false);
+        Assertions.Assert(new StringBasedFunction("x = -1").isHorizontal(), false);
+        Assertions.Assert(new StringBasedFunction("x=-1").isHorizontal(), false);
+        Assertions.Assert(new StringBasedFunction("x=1").isHorizontal(), false);
+
+        System.out.println(StringUtilities.generateTestEndString(testName, 0));
+    }
+    
+    @Test
+    public void testVertical()
+    {
+        String testName = "String-based Function: Vertical";
+
+        System.out.println(StringUtilities.generateTestStartString(testName, 0));
+
+        Assertions.Assert(new StringBasedFunction("y = 0").isVertical(), false);
+        Assertions.Assert(new StringBasedFunction("y = -1").isVertical(), false);
+        Assertions.Assert(new StringBasedFunction("y=-1").isVertical(), false);
+        Assertions.Assert(new StringBasedFunction("y=1").isVertical(), false);
+        Assertions.Assert(new StringBasedFunction("x = 0").isVertical(), true);
+        Assertions.Assert(new StringBasedFunction("x = -1").isVertical(), true);
+        Assertions.Assert(new StringBasedFunction("x=-1").isVertical(), true);
+        Assertions.Assert(new StringBasedFunction("x=1").isVertical(), true);
+
+        System.out.println(StringUtilities.generateTestEndString(testName, 0));
+    }
+    
+    @Test
     public void test()
     {
         String testName = "String-based Function Tests";

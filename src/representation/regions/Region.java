@@ -11,10 +11,12 @@ import java.util.Set;
 import java.util.Vector;
 import engine.region.Verifier;
 import exceptions.DomainException;
+import math.analysis.monotonicity.Monotonicity;
 import representation.Point;
 import representation.bounds.Bound;
 import representation.bounds.functions.Domain;
 import representation.bounds.functions.StringBasedFunction;
+import solver.volume.AxisOfRevolution;
 import utilities.Pair;
 import utilities.Utilities;
 
@@ -478,5 +480,183 @@ public class Region implements Serializable
         }
         
         return new Pair<Bound, Bound>(inRange.get(0), inRange.get(1));
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////// One-to-one and Monotonicity ///////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * A one-to-one region is defined by 2-4 sides of the rectangle.
+     * 2 boundaries: x^2, x
+     * 3 boundaries: y = 0, x = 4, y = x^2
+     * 4 boundaries: square
+     *   
+     * @return if this region is one-to-one according to the above, informal definition above
+     */
+    public boolean isOneToOne()
+    {
+        if (!isSimple()) return false;
+
+        // Check for monotonicity of the individual functions in top / bottom
+        if (!Monotonicity.getInstance().isMonotone(_top.getBounds().get(0))) return false;
+
+        if (!Monotonicity.getInstance().isMonotone(_bottom.getBounds().get(0))) return false;
+        
+        return true;
+    }
+    
+    /**
+     * A monotonic region is defined by 2-4 sides of the rectangle.
+     * 2 boundaries: x^2, x
+     * 3 boundaries: y = 0, x = 4, y = x^2
+     * 4 boundaries: square
+     *   
+     * @return if this region is 'simple' according to the above, informal definition
+     */
+    public boolean isSimple()
+    {
+        if (isTwoSimple()) return true;
+        if (isThreeSimple()) return true;
+        if (isFourSimple()) return true;
+        
+        return false;        
+    }
+    
+    /**
+     * 2 boundaries: x^2, x (a left / right or top / bottom)
+     *   
+     * @return if this region is monotonic based on two functions
+     */
+    public boolean isTwoSimple()
+    {
+        // Check if top / bottom have more than a single function
+        if (_bottom.numberOfBounds() != 1) return false;
+        if (_top.numberOfBounds() != 1) return false;
+
+        // left / right need to be points
+        if (!_left.isPoint()) return false;
+        if (!_right.isPoint()) return false;
+
+        return true;
+    }
+
+    /**
+     * 3 boundaries: y = 0, x = 4, y = x^2
+     *   
+     * @return if this region is monotonic based on two functions and a vertical on one side
+     */
+    public boolean isThreeSimple()
+    {
+        // Check if top / bottom have more than a single function
+        if (_bottom.numberOfBounds() != 1) return false;
+        if (_top.numberOfBounds() != 1) return false;
+
+        // left is a point and right is vertical OR
+        // right is a points and left is vertical
+        if (! (_left.isPoint() && _right.isVertical())) return false;
+        if (! (_left.isVertical() && _right.isPoint())) return false;
+
+        return true;
+    }
+    
+    /**
+     * 3 boundaries: y = 0, x = 4, y = x^2
+     *   
+     * @return if this region is monotonic based on two functions and a vertical on one side
+     */
+    public boolean isFourSimple()
+    {
+        // Check if top / bottom have more than a single function
+        if (_bottom.numberOfBounds() != 1) return false;
+        if (_top.numberOfBounds() != 1) return false;
+
+        // left AND right need to be verticals
+        return _left.isVertical() && _right.isVertical();
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////// Volume-Based Processing ////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * This method returns whether the given line passes through the interior of this region.
+     * If a line intersects the region, it does not pass through.
+     * 
+     *  Algorithm (for horizontal lines; similar for vertical):
+     *    Assume a horizontal y = H 
+     *    (I[1..n], H) := all points of intersection between the line and ALL bounds of the region
+     *    for all midpoints (m, H) between (I[i], H) and (I[i+1], H)
+     *      determine if (m, H) is between the top and bottom bounds:
+     *        bottom(m) < H < top(m) (indicates inside)
+     *  
+     * @param line -- a horizontal or vertical line (safety checked)
+     * @return {@code true} if the line passes on the interior of the region
+     */
+    public boolean linePassesThrough(StringBasedFunction line)
+    {
+        // TODO: These function definitions should be unit tested
+        if (!line.isHorizontal() && !line.isVertical()) throw new IllegalArgumentException("Not linear");
+
+        // TODO: implement the above algorithm
+        
+        
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * 
+     * @param axis -- axis of revolution (must be vertical)
+     * @return the function (left, right, top, or bottom) with shortest horizontal distance to the given axis
+     * 
+     * This function assumes a monotonic region
+     */
+    public StringBasedFunction computeClosestHorizontally(AxisOfRevolution axis)
+    {
+        if (!axis.isVertical()) throw new IllegalArgumentException("Not vertical.");
+
+        // Compute
+
+
+            
+        return null;
+    }
+    
+    /**
+     * 
+     * @param axis a vertical line
+     * @return if the given vertical line is to the right of the region
+     *         (may intersect the right side and still be ok)
+     */
+    public boolean rightOf(StringBasedFunction vertical)
+    {
+        if (!vertical.isVertical()) throw new IllegalArgumentException("Parameter not vertical: " + vertical);
+        
+        double vertical_x = vertical.leftBoundX(); 
+        
+        //
+        // Compare the x-values of the left / right bounds of the region to the axis
+        //
+        return Utilities.greaterThanOrEqualDoubles(vertical_x, _right.getBound().rightBoundX());
+    }
+
+    /**
+     * 
+     * @param axis a vertical line
+     * @return
+     */
+    public boolean leftOf(StringBasedFunction vertical)
+    {
+        if (!vertical.isVertical()) throw new IllegalArgumentException("Parameter not vertical: " + vertical);
+
+        //
+        // Compare the x-values of the left / right bounds of the region to the axis
+        //
+        return Utilities.greaterThanOrEqualDoubles(_left.getBound().leftBoundX(), vertical.leftBoundX());
     }
 }

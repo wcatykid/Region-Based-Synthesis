@@ -9,6 +9,7 @@ import representation.regions.Region;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParserTest;
 import solver.area.regionComputer.RegionExtractor;
+import solver.problemRegions.ProblemRegionIdentifier;
 import utilities.Assertions;
 import utilities.StringUtilities;
 

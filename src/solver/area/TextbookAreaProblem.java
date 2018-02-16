@@ -1,11 +1,6 @@
 package solver.area;
 
-import java.util.Vector;
-
-import math.analysis.intersection.Intersection;
-import representation.Point;
 import representation.bounds.functions.Domain;
-import representation.bounds.functions.StringBasedFunction;
 import solver.TextbookProblem;
 
 /**

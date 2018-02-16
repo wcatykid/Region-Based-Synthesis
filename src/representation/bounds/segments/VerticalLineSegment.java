@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import exceptions.RepresentationException;
 import representation.bounds.Bound;
+import representation.bounds.functions.Domain;
 import representation.ComplexNumber;
 import representation.Point;
 
@@ -21,6 +22,9 @@ public class VerticalLineSegment extends LineSegment implements Serializable
         {
             throw new RepresentationException("Vertical Segment is not vertical");
         }
+        
+        // Dictate / specify the domain of this vertical: [x, x]
+        _domain = new Domain(p1.getX(), p2.getX());
     }
 
     public VerticalLineSegment(LineSegment that) throws RepresentationException
