@@ -92,5 +92,4 @@ public class PointBound extends Bound implements Serializable
     {
         throw new RuntimeException( "PointBound.evaluateAtPointByY is not implemented yet!" ) ;
     }
-
 }

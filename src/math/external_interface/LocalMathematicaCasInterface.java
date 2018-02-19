@@ -1,5 +1,8 @@
 package math.external_interface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.wolfram.jlink.*;
 import globals.Constants;
 import representation.ComplexNumber;
@@ -82,24 +85,11 @@ public class LocalMathematicaCasInterface extends CasInterface
      */
     public String query(String q)
     {
+        clear();
+        
         String result = _mathematicaLink.evaluateToOutputForm(q, 0);
 
         return result;
-        //        try
-        //        {
-        //            //_mathematicaLink.discardAnswer();
-        //
-        //            String result = _mathematicaLink.evaluateToOutputForm(q, 0);
-        //
-        //            return result;
-        //            
-        //        }
-        //        catch (MathLinkException e)
-        //        {
-        //            System.out.println("Mathlink exception on query: " + q);
-        //            e.printStackTrace();
-        //        }
-        //        return null;
     }
 
     /**
@@ -122,6 +112,19 @@ public class LocalMathematicaCasInterface extends CasInterface
         return cn ;
     }
 
+    /*
+     * Clears mathematica variables
+     */
+    private void clear()
+    {
+        final String[] valuesToClear = { "x", "y", "fLocal" };
+
+        for (String toClear : valuesToClear)
+        {
+            _mathematicaLink.evaluateToOutputForm("Clear[" + toClear + "]", 0);   
+        }
+    }
+    
     /**
      * @param queries -- a sequence of String queries where the last query returns a double
      * @return the result of performing q[0] followed by q[1] in sequence, etc.
@@ -182,38 +185,44 @@ public class LocalMathematicaCasInterface extends CasInterface
     public ComplexNumber evaluateAtPoint(String function, double x)
     {
         final String fName = "fLocal";
-
-        String[] queries = new String[3];
+        List<String> queries = new ArrayList<String>();
         
-        //
-        // Clear
-        //
-        queries[0] = "Clear[" + fName + "]";
-
-        //
-        // Define the function
-        //
         // Determine the variable of the function
         char variable = function.contains("y") ? 'y' : 'x';
         
-        queries[1] = fName + "[" + variable + "_]";
-
-        queries[1] += ":=";
+        //
+        // Clear (function and variable)
+        //
+        queries.add("Clear[" + fName + "]");
+        queries.add("Clear[" + variable + "]");
         
-        queries[1] += function;
+        //
+        // Define the function
+        //
+        String query = fName + "[" + variable + "_]";
 
+        query += ":=";
+        
+        query += function;
+
+        queries.add(query);
+        
         //
         // Evaluative expression: f(x)
         //
         // NumberForm Forces a decimal evaluation:
         // https://mathematica.stackexchange.com/questions/24208/how-do-i-get-mathematica-to-show-a-number-in-non-exponential-form
-        queries[2] = "NumberForm[";
+        query = "NumberForm[";
         
-        queries[2] += fName + "[" + x + "]";
+        query += fName + "[" + x + "]";
         
-        queries[2] += ", Infinity, ExponentFunction -> (Null &)]";
+        query += ", Infinity, ExponentFunction -> (Null &)]";
         
-        return querySequence(queries);
+        queries.add(query);
+        
+        String[] strArray = new String[queries.size()];
+        strArray = queries.toArray(strArray);
+        return querySequence(strArray);
     }
 
     //

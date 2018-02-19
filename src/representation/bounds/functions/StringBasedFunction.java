@@ -73,9 +73,11 @@ public class StringBasedFunction extends BoundedFunction
     {
         if (_variable != VariableT.X) return false;
 
-        String result = LocalMathematicaCasInterface.getInstance().query(getFunction());
-
-        return !result.contains(_variable.toString());
+        return getFunction().contains("=");
+        
+//        String result = LocalMathematicaCasInterface.getInstance().query(getFunction());
+//
+//        return !result.contains(_variable.toString());
     }
 
     /**

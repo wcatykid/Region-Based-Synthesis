@@ -171,7 +171,7 @@ System.out.println("|" + result + "|");
         //
         // Construct
         //
-        String query = "Solve[";
+        String query = "NSolve[";
         query += f.toFullMathematicaString();
         query += " == ";
         query += g.toFullMathematicaString();

@@ -67,6 +67,12 @@ public abstract class Analyzer
         {
         	String p = point.trim();
 //            System.out.print(point + "?");
+        	
+        	// Check for a strange boolean result from Mathematica
+        	if (p.contains("True") || p.contains("False"))
+        	{
+        	    System.err.println("Boolean detected in |" + point + "|");
+        	}
 
             // Avoid garbage
             if (p.length() > 5 && p.charAt(0) == 'x')
@@ -78,7 +84,12 @@ public abstract class Analyzer
             }
             else if( p.length() > 0 )
             {
+                try {
                 xs.add(Double.parseDouble(p));
+                } catch (NumberFormatException e)
+                {
+                    System.err.println("Expected formatting issue when parsing (non)-double " + p);
+                }
             }
         }
         

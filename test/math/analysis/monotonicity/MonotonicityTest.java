@@ -26,7 +26,8 @@ public class MonotonicityTest
         runMonotonicity(1, "x", -5, 5, true);
         runMonotonicity(1, "y = 5", -5, 5, true);
         runMonotonicity(1, "x = 5", 5, 5, false);
-
+        runMonotonicity(1, "x^2 - 9", -5, 5, false);
+        
         
         System.out.println(StringUtilities.generateTestEndString(testName, 0));
     }
