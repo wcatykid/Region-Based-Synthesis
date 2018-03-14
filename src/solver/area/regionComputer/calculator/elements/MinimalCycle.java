@@ -14,7 +14,6 @@ import exceptions.RepresentationException;
 import representation.Point;
 import representation.bounds.Bound;
 import representation.bounds.PointBound;
-import representation.bounds.functions.StringBasedFunction;
 import representation.bounds.segments.VerticalLineSegment;
 import representation.regions.LeftRight;
 import representation.regions.Region;
@@ -180,23 +179,46 @@ public class MinimalCycle extends Primitive
         PlanarGraphPoint right = null;
 
         // As a means of acquiring the edge annotation function
-        StringBasedFunction bound = null;
+        Bound bound = null;
         for (int index = 1; index < points.size(); index++)
         {
             //
             // We want to observe the annotation of the point in order to decide if it is the end of the interval
             //
-            PlanarGraphNode<NodePointT, PlanarEdgeAnnotation> node = graph.getNode(points.get(index));
+            PlanarGraphNode<NodePointT, PlanarEdgeAnnotation> priorNode   = graph.getNode( points.get( index - 1 ) ) ;
+            PlanarGraphNode<NodePointT, PlanarEdgeAnnotation> currentNode = graph.getNode( points.get( index     ) ) ;
 
-            if (node.getAnnotation() == NodePointT.MIDPOINT)
+            //This is for graphs built without midpoints between intersections
+            //In this case we can do in one loop iteration what the two else ifs below have to do in two loop iterations
+            if( priorNode.getAnnotation() == NodePointT.INTERSECTION && currentNode.getAnnotation() == NodePointT.INTERSECTION )
+            {
+                right = points.get( index ) ;
+
+                PlanarGraphEdge<PlanarEdgeAnnotation> edge = graph.getEdge( left,  right ) ;
+    
+                if( edge == null )
+                	System.err.println( "Edge does not exist in the graph: " + left + " " + right ) ;
+                
+                bound = edge.getAnnotation().getBound().clone() ;
+            	
+                bound.setDomain( left.getX(), right.getX() ) ;
+
+                if( ! tb.addBound( bound ) )
+                	System.err.println( "Bound addition failed: " + bound ) ;
+                
+                // Update for the next interval
+                left  = right ;
+                right =  null ;
+            }
+            else if (currentNode.getAnnotation() == NodePointT.MIDPOINT)
             {
                 PlanarGraphEdge<PlanarEdgeAnnotation> edge = graph.getEdge(left,  points.get(index));
 
                 if (edge == null) System.err.println("Edge does not exist in the graph: " + left + " " + right);
                 
-                bound = edge.getAnnotation().getFunction().clone();
+                bound = edge.getAnnotation().getBound().clone() ;
             }
-            else if (node.getAnnotation() == NodePointT.INTERSECTION || node.getAnnotation() == NodePointT.VERTICAL)
+            else if (currentNode.getAnnotation() == NodePointT.INTERSECTION || currentNode.getAnnotation() == NodePointT.VERTICAL)
             {
                 right = points.get(index);
                 

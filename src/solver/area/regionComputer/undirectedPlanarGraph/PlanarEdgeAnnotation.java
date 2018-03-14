@@ -1,19 +1,19 @@
 package solver.area.regionComputer.undirectedPlanarGraph;
 
-import representation.bounds.functions.StringBasedFunction;
+import representation.bounds.Bound;
 
 //
 // General Annotation object for Planar graph edges
 //
 public class PlanarEdgeAnnotation
 {
-    // The function for which the edge is described
-    protected StringBasedFunction _function;
-    public StringBasedFunction getFunction() { return _function; }
+    // The bound for which the edge is described
+    protected Bound _bound ;
+    public Bound getBound() { return _bound ; }
 
-    public PlanarEdgeAnnotation(StringBasedFunction function)
+    public PlanarEdgeAnnotation( Bound bound )
     {
-        _function = function;
+    	_bound = bound ;
     }
     
     //
@@ -21,6 +21,6 @@ public class PlanarEdgeAnnotation
     //
     public String toString()
     {
-        return _function.toCompactLatexString();
+        return _bound.toCompactLatexString() ;
     }
 }

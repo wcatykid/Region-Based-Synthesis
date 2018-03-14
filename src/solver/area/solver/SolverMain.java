@@ -11,6 +11,7 @@ import solver.area.AreaSolution;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParser;
 import solver.area.regionComputer.RegionExtractor;
+import solver.area.regionComputer.TextbookProblemRegionExtractor;
 import solver.problemRegions.ProblemRegionIdentifier;
 import utilities.Utilities;
 
@@ -39,7 +40,7 @@ public class SolverMain extends Main
         // we track the number of problems we have solved
         _numProblems++;
         
-        RegionExtractor extractor = new RegionExtractor(problem);
+        RegionExtractor extractor = new TextbookProblemRegionExtractor(problem);
 
         Vector<Region> regions = extractor.getRegions();
         

@@ -99,7 +99,7 @@ public class RegionExtractorTest
         //
         TextbookAreaProblem problem = AreaProblemParserTest.makeAreaProblem(pStr);
 
-        RegionExtractor extractor = new RegionExtractor(problem);
+        RegionExtractor extractor = new TextbookProblemRegionExtractor(problem);
 
         //   Graph, No. nodes, No. Edges
         Vector<Region> regions = extractor.getRegions();
@@ -166,7 +166,7 @@ public class RegionExtractorTest
         //
         TextbookAreaProblem problem = AreaProblemParserTest.makeAreaProblem(sProblem);
 
-        RegionExtractor extractor = new RegionExtractor(problem);
+        RegionExtractor extractor = new TextbookProblemRegionExtractor(problem);
 
         Vector<Region> regions = extractor.getRegions();
 
@@ -217,7 +217,7 @@ public class RegionExtractorTest
         //
         TextbookAreaProblem problem = AreaProblemParserTest.makeAreaProblem(sProblem);
 
-        RegionExtractor extractor = new RegionExtractor(problem);
+        RegionExtractor extractor = new TextbookProblemRegionExtractor(problem);
 
         Vector<Region> regions = extractor.getRegions();
 

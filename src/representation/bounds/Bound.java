@@ -30,7 +30,7 @@ public abstract class Bound implements Serializable
 
     //    public abstract Point getLeftTopPoint();
     //    public abstract Point getLeftBottomPoint();
-    public abstract Object clone();
+    public abstract Bound clone();
 
     /**
      * @param x

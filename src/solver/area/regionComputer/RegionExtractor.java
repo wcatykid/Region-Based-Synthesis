@@ -5,26 +5,20 @@ import java.util.Vector;
 
 import representation.bounds.functions.Domain;
 import representation.regions.Region;
-import solver.TextbookProblem;
 import solver.area.regionComputer.calculator.FacetCalculator;
 import solver.area.regionComputer.calculator.elements.MinimalCycle;
 import solver.area.regionComputer.calculator.elements.Primitive;
-import solver.area.regionComputer.graphBuilder.PlanarGraphBuilder;
 import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
 
 /**
- * Given a textbook problem, extract all of its regions:
- *    (1) Create planar graph
- *    (2) Compute facets
- *    (3) Convert facets to area problem regions
+ * Given a planar graph
+ *    (1) Compute facets
+ *    (2) Convert facets to area problem regions
  */
-public class RegionExtractor
+public abstract class RegionExtractor
 {
-    // The problem we are acting on
-    protected TextbookProblem _problem;
-
     // Facets extracted from analysis
     protected ArrayList<Primitive> _primitives;
     public ArrayList<Primitive> getPrimitives() { return _primitives; }
@@ -43,9 +37,8 @@ public class RegionExtractor
     protected Domain _domain;
     public Domain getDeducedDomain() { return _domain; }
 
-    public RegionExtractor(TextbookProblem tap)
+    public RegionExtractor()
     {
-        _problem = tap;
         _regions = null;
         _domain = null;
     }
@@ -55,39 +48,27 @@ public class RegionExtractor
      */
     public Vector<Region> getRegions()
     {
-        if (_regions == null) buildRegions();
-
-        return _regions;
+        if( _regions == null )
+        	buildRegions() ;
+        return _regions ;
     }
 
     /**
      * Main Planar graph based algorithm for identifying all regions in the stated problem
      */
-    protected void buildRegions()
+    protected abstract void buildRegions() ;
+    
+    protected void buildRegionsFromGraph( PlanarGraph<NodePointT, PlanarEdgeAnnotation> graph )
     {
-        //
-        // (1) Based on this textbook problem, compute the planar graph 
-        //
-        PlanarGraphBuilder builder = new PlanarGraphBuilder(_problem);
+        PlanarGraph<NodePointT, PlanarEdgeAnnotation> copy = new PlanarGraph<>( graph ) ;
+        FacetCalculator<NodePointT, PlanarEdgeAnnotation> fCalculator = new FacetCalculator<>( copy ) ;
 
-        builder.build();
-
-        PlanarGraph<NodePointT, PlanarEdgeAnnotation> planarGraph = builder.getGraph();
-        PlanarGraph<NodePointT, PlanarEdgeAnnotation> copy = new PlanarGraph<NodePointT, PlanarEdgeAnnotation>(planarGraph);
-        
-        //
-        // (2) Perform Facet Indentification on the Planar graph
-        //
-        FacetCalculator<NodePointT, PlanarEdgeAnnotation> fCalculator = new FacetCalculator<NodePointT, PlanarEdgeAnnotation>(planarGraph);
-
+        // (1) Perform facet identification on the planar graph
         _primitives = fCalculator.getPrimitives();
-        
-        _facets = refinePrimitivesToCycles(fCalculator.getPrimitives());
+        _facets = refinePrimitivesToCycles( fCalculator.getPrimitives() ) ;
 
-        //
-        // (3) Convert Facets back to regions
-        //
-        _regions = convertFacetsToRegions(copy);
+        // (2) Convert facets back to regions
+        _regions = convertFacetsToRegions( graph ) ;
     }
 
     /**

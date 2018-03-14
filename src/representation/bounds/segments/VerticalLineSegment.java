@@ -93,7 +93,7 @@ public class VerticalLineSegment extends LineSegment implements Serializable
     }
 
     @Override
-    public Object clone()
+    public Bound clone()
     {
         VerticalLineSegment line = null;
 

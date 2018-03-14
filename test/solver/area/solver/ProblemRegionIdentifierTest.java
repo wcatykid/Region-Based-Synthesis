@@ -9,6 +9,7 @@ import representation.regions.Region;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParserTest;
 import solver.area.regionComputer.RegionExtractor;
+import solver.area.regionComputer.TextbookProblemRegionExtractor;
 import solver.problemRegions.ProblemRegionIdentifier;
 import utilities.Assertions;
 import utilities.StringUtilities;
@@ -116,7 +117,7 @@ public class ProblemRegionIdentifierTest
         //
         TextbookAreaProblem problem = AreaProblemParserTest.makeAreaProblem(pStr);
         
-        RegionExtractor extractor = new RegionExtractor(problem);
+        RegionExtractor extractor = new TextbookProblemRegionExtractor(problem);
 
         Vector<Region> regions = extractor.getRegions();
         

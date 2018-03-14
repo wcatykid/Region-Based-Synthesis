@@ -5,24 +5,21 @@ import java.util.Collections;
 import java.util.Vector;
 
 import exceptions.DomainException;
-import exceptions.RepresentationException;
 import math.analysis.derivatives.Derivatives;
-import math.analysis.extrema.ExtremeValues;
 import math.analysis.intersection.Intersection;
 import math.integral.DefiniteIntegral;
 import representation.Point;
 import representation.bounds.Bound;
 import representation.bounds.functions.BoundedFunction;
 import representation.bounds.functions.DifferenceBoundedFunction;
-import representation.bounds.functions.Domain;
 import representation.bounds.functions.StringBasedFunction;
-import representation.bounds.segments.VerticalLineSegment;
 import representation.regions.LeftRight;
 import representation.regions.Region;
 import representation.regions.TopBottom;
 import solver.Solution;
 import solver.Solver;
 import solver.area.AreaSolution;
+import solver.area.regionComputer.GraphRegionExtractor;
 import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarGraph;
@@ -281,19 +278,19 @@ public class AreaSolverByY extends Solver
         	
         	if( splitHorizontalInTwo )
         	{
-        		addEdgeToGraph( graph, p.getLeft().getX(), p.getLeft().getY(), splitPoint         , p.getLeft() .getY() ) ;
-        		addEdgeToGraph( graph, splitPoint        , p.getLeft().getY(), p.getRight().getX(), p.getRight().getY() ) ;
+        		addEdgeToGraphHorizontal( graph, p.getLeft().getX(), splitPoint         , p.getLeft() .getY() ) ;
+        		addEdgeToGraphHorizontal( graph, splitPoint        , p.getRight().getX(), p.getRight().getY() ) ;
         	}
         	else
         	{
-        		addEdgeToGraph( graph, p.getLeft().getX(), p.getLeft().getY(), p.getRight().getX(), p.getRight().getY() ) ;
+        		addEdgeToGraphHorizontal( graph, p.getLeft().getX(), p.getRight().getX(), p.getLeft().getY() ) ;
         	}
         }
         
         //For each vertical line segment, add an edge to P. (This is simple because verticals are very restricted.)
         for( VerticalLine p : verticals )
         {
-    		addEdgeToGraph( graph, p.getTop().getX(), p.getTop().getY(), p.getBottom().getX(), p.getBottom().getY() ) ;
+    		addEdgeToGraphVertical( graph, p.getTop().getY(), p.getBottom().getY(), p.getTop().getX() ) ;
         }
         
         //TODO: tell Dr. Alvin about this added part
@@ -314,11 +311,11 @@ public class AreaSolverByY extends Solver
             Double lastPos = region.getLeft().getMinimum().getY() ;
             for( Double y : leftBoundSplits )
             {
-        		addEdgeToGraph( graph, leftBound, lastPos, leftBound, y ) ;
+            	addEdgeToGraphVertical( graph, lastPos, y, leftBound ) ;
                 lastPos = y ;
             }
 
-    		addEdgeToGraph( graph, leftBound, lastPos, leftBound, region.getLeft().getMaximum().getY() ) ;
+            addEdgeToGraphVertical( graph, lastPos, region.getLeft().getMaximum().getY(), leftBound ) ;
         }
         
         if( region.getRight().isVertical() )
@@ -338,11 +335,11 @@ public class AreaSolverByY extends Solver
             Double lastPos = region.getRight().getMinimum().getY() ;
             for( Double y : rightBoundSplits )
             {
-        		addEdgeToGraph( graph, rightBound, lastPos, rightBound, y ) ;
+            	addEdgeToGraphVertical( graph, lastPos, y, rightBound ) ;
                 lastPos = y ;
             }
 
-    		addEdgeToGraph( graph, rightBound, lastPos, rightBound, region.getRight().getMaximum().getY() ) ;
+            addEdgeToGraphVertical( graph, lastPos, region.getRight().getMaximum().getY(), rightBound ) ;
         }
         
         //For each function F in the top and bottom (Things get a bit more complicated here.)
@@ -360,7 +357,7 @@ public class AreaSolverByY extends Solver
         		if( lastTop != null )
         		{
             		addEdgeToGraph( graph, lastTop.getPoint().getX(), lastTop.getPoint().getY(),
-            				pt.getPoint().getX(), pt.getPoint().getY() ) ;
+            				pt.getPoint().getX(), pt.getPoint().getY(), region.getTop().getBounds().get( 0 ) ) ;
         		}
 
     			lastTop = pt ;
@@ -371,33 +368,50 @@ public class AreaSolverByY extends Solver
         		if( lastBot != null )
         		{
             		addEdgeToGraph( graph, lastBot.getPoint().getX(), lastBot.getPoint().getY(),
-            				pt.getPoint().getX(), pt.getPoint().getY() ) ;
+            				pt.getPoint().getX(), pt.getPoint().getY(), region.getBottom().getBounds().get( 0 ) ) ;
         		}
 
     			lastBot = pt ;
         	}
         }
-            
-        //TODO: the rest of this (which is still magic)
         
-        //////////////////////////////////////////////////////////////////////
-        // INTEGRATE ALL SUB-REGIONS W.R.T y AND SUM
-        //////////////////////////////////////////////////////////////////////
+        GraphRegionExtractor extractor = new GraphRegionExtractor( graph ) ;
+        Vector<Region> regions = extractor.getRegions() ;
 
-        //TODO: all of this
+        //TODO: come back to this when we flesh out how to check for monotonicity that is compatible
+        //      with the way we've disected these regions
+        //for( Region r : regions )
+        //	if( ! r.isOneToOne() )
+        //		throw new RuntimeException( "While solving w.r.t. Y:  Found a"
+        //				+ " region from the extracted graph that is not one-to-one." ) ;
 
-        return null ;
+
+
+        return solveSimpleRegions( regions ) ;
     }
     
-    private void addEdgeToGraph( PlanarGraph<NodePointT,PlanarEdgeAnnotation> graph, Double x1, Double y1, Double x2, Double y2 )
+    private void addEdgeToGraphHorizontal( PlanarGraph<NodePointT,PlanarEdgeAnnotation> graph, Double x1, Double x2, Double y )
+    {
+    	addEdgeToGraph( graph, x1, y, x2, y, new StringBasedFunction( "y = " + y.toString() ) ) ;
+    }
+
+    private void addEdgeToGraphVertical( PlanarGraph<NodePointT,PlanarEdgeAnnotation> graph, Double y1, Double y2, Double x )
+    {
+    	addEdgeToGraph( graph, x, y1, x, y2, new StringBasedFunction( "x = " + x.toString() ) ) ;
+    }
+
+    private void addEdgeToGraph( PlanarGraph<NodePointT,PlanarEdgeAnnotation> graph,
+    						     Double x1, Double y1, Double x2, Double y2, Bound bound )
     {
         PlanarGraphPoint first  = new PlanarGraphPoint( null, x1, y1 ) ;
         PlanarGraphPoint second = new PlanarGraphPoint( null, x2, y2 ) ;
     	graph.addNode( first , NodePointT.INTERSECTION ) ;
     	graph.addNode( second, NodePointT.INTERSECTION ) ;
-        graph.addUndirectedEdge( first, second, null ) ;
+
+        // Add the edge
+        graph.addUndirectedEdge( first , second, new PlanarEdgeAnnotation( bound ) ) ;
     }
-    
+
     private void addPointToIntersectionList( ArrayList<FunctionIntersection> intersections, FunctionIntersection pt )
     {
     	if( ! intersections.contains( pt ) )
@@ -447,121 +461,6 @@ public class AreaSolverByY extends Solver
     	
         return new Pair<Double,Double>( slopes.get( 0 ), slopes.get( 1 ) ) ;
     }
-
-    /**
-     * @param region -- a set of regions with function defined in terms of X
-     * @param xs -- the set of interior x-values for which this region will be split (along the X-values)
-     * @return the set of simple regions from a, x1, x2, ...xn, b defined from: [a, x1] ; [x1, x2]; ... ; [xn, b]
-     */
-    private Vector<Region> constructSimpleRegions(Region region, Vector<Double> xs)
-    {
-        //
-        // Bookend the interior points with the left, right values of the region; the given points are interior
-        //
-        Vector<Double> allXs = new Vector<Double>();
-        allXs.add(0, region.leftX());
-        allXs.add(region.rightX());
-
-        Vector<Region> simpleRegions = new Vector<Region>();
-        //
-        // Construct the rotated regions
-        //
-        // Atomic regions are book-ended by X [ (a,b); (b,c); (c,d) ]: a -------- b ----- c ---------d
-        //
-        //  The resulting regions will have [bottom; top] = [a,b] ; [b,c] ; [c,d]
-        //                 The left / right will refer to f^(-1) and g^(-1) of the original region 
-        //
-        for (int x_index = 0; x_index < allXs.size() - 1; x_index++)
-        {
-            //
-            // Establish the bounds (domain) of the simple region
-            //
-            double left_x = allXs.get(x_index);
-            double right_x = allXs.get(x_index + 1);
-            Domain interval = new Domain(left_x, right_x);
-
-            if (left_x == right_x) System.err.println("left == right: " + left_x + " " + right_x);
-
-            // Build the function: f - g == top - bottom
-            Bound topF = null;
-            Bound bottomF = null;
-            try
-            {
-                topF = region.getFirstNonVerticalTopBound(left_x);
-                bottomF = region.getFirstNonVerticalBottomBound(left_x);
-            }
-            catch (DomainException e)
-            {
-                System.err.println("Attempt to identify the proper bound for top / bottom failed due to domain " + e);
-                e.printStackTrace();
-            }
-
-            // Check that we have actual functions and not other Bound types
-            if (!(topF instanceof BoundedFunction)) System.err.println("Top function is not a function! " + topF);
-            if (!(bottomF instanceof BoundedFunction)) System.err.println("Bottom function is not a function! " + bottomF);
-
-            //
-            //
-            // Create the simple region
-            //
-            //
-
-            //
-            // Single Top Function
-            //
-            Bound topBound = (Bound)topF.clone();
-            topBound.setDomain(interval);
-            TopBottom top = new TopBottom(topBound);
-
-            //
-            // Single Bottom Function
-            //
-            Bound bottomBound = (Bound)bottomF.clone();
-            bottomBound.setDomain(interval);
-            TopBottom bottom = new TopBottom(bottomBound);
-
-            //
-            // Left Bound
-            //
-            // Special case of first simple region's left bound: copy original; otherwise, use vertical
-            LeftRight left = null;
-            if (x_index == 0) left = (LeftRight)region.getLeft().clone();
-            else
-            {
-                Point botPoint = new Point(left_x, bottomF.evaluateAtPoint(left_x).getReal());
-                Point topPoint = new Point(left_x, topF.evaluateAtPoint(left_x).getReal());
-
-                try
-                {
-                    left = new LeftRight(new VerticalLineSegment(botPoint, topPoint));
-                }
-                catch (RepresentationException e) { e.printStackTrace(); }
-            }
-            //
-            // Right Bound
-            //
-            LeftRight right = null;
-            // Special case of right simple region's right bound: copy original, otherwise, use vertical
-            if (x_index + 1 == xs.size() - 1) right = (LeftRight)region.getRight().clone();
-            else
-            {
-                Point botPoint = new Point(right_x, bottomF.evaluateAtPoint(right_x).getReal());
-                Point topPoint = new Point(right_x, topF.evaluateAtPoint(right_x).getReal());
-
-                try
-                {
-                    right = new LeftRight(new VerticalLineSegment(botPoint, topPoint));
-                }
-                catch (RepresentationException e) { e.printStackTrace(); }
-            }
-
-            // Create the simple region
-            simpleRegions.add(new Region (left, top, right, bottom));
-        }
-
-        return simpleRegions;
-    }
-
 
     /**
      * @param regions -- a set of simple regions
@@ -713,7 +612,6 @@ public class AreaSolverByY extends Solver
 
         return solution;
     }
-
 
     /**
      * @param corners -- set of points

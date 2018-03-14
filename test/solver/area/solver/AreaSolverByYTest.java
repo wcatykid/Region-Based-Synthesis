@@ -11,6 +11,7 @@ import solver.area.AreaSolution;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParserTest;
 import solver.area.regionComputer.RegionExtractor;
+import solver.area.regionComputer.TextbookProblemRegionExtractor;
 import solver.area.solver.AreaSolverByY;
 import solver.problemRegions.ProblemRegionIdentifier;
 import utilities.Assertions;
@@ -112,7 +113,7 @@ public class AreaSolverByYTest
         TextbookAreaProblem problem = AreaProblemParserTest.makeAreaProblem(pStr);
 
         // Extract the appropriate solution regions
-        RegionExtractor extractor = new RegionExtractor(problem);
+        RegionExtractor extractor = new TextbookProblemRegionExtractor(problem);
 
         Vector<Region> regions = extractor.getRegions();
 

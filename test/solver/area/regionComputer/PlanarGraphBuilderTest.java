@@ -3,7 +3,6 @@ package solver.area.regionComputer;
 import org.junit.Test;
 
 import solver.area.TextbookAreaProblem;
-import solver.area.parser.AreaProblemParser;
 import solver.area.parser.AreaProblemParserTest;
 import solver.area.regionComputer.graphBuilder.PlanarGraphBuilder;
 import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;

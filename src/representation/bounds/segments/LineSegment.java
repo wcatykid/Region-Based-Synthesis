@@ -103,7 +103,8 @@ public class LineSegment extends Bound implements Serializable
         return (_bottomPt.getY() - _topPt.getY()) / (_bottomPt.getX() - _topPt.getX());
     }
 
-    public Object clone()
+    @Override
+    public Bound clone()
     {
         LineSegment line = null;
 

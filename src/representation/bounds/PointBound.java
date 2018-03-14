@@ -28,7 +28,8 @@ public class PointBound extends Bound implements Serializable
         _point = that._point;
     }
 
-    public Object clone() { return new PointBound(this._point); }
+    @Override
+    public Bound clone() { return new PointBound(this._point); }
 
     //
     // Evaluating f(x)
@@ -92,4 +93,5 @@ public class PointBound extends Bound implements Serializable
     {
         throw new RuntimeException( "PointBound.evaluateAtPointByY is not implemented yet!" ) ;
     }
+
 }
