@@ -430,6 +430,7 @@ public class AreaSolverByY extends Solver
         if( 	Utilities.lessThanOrEqualDoubles( y, lr.getMaximum().getY() )
             &&	Utilities.greaterThanOrEqualDoubles( y, lr.getMinimum().getY() ) )
         {
+        	function = lr.isVertical() ? FunctionIntersection.Function.Neither : function ; 
         	addPointToIntersectionList( intersections, new FunctionIntersection( new Point( lr.getMaximum().getX(), y ), function ) ) ;
         }
     }

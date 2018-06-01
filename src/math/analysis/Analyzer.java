@@ -53,11 +53,11 @@ public abstract class Analyzer
     {
 //        System.out.println("Input: " + input);
         
-        String values = input.substring(1, input.length()-1);
+//        String values = input.substring(1, input.length()-1);
         
 //        System.out.println("Values: " + values);
         
-        String[] points = values.split("[{]|[}]|,");
+        String[] points = input.split("[{]|[}]|,");
         
         //
         // Parse the individual points: x -> 0

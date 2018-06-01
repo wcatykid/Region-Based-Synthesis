@@ -177,11 +177,7 @@ public class Inverses extends Analyzer
 
         System.out.println("Input: " + input);
 
-        String fList = input.substring(1, input.length()-1);
-
-        System.out.println("Function List: " + fList);
-
-        String[] functions = fList.split("[{]|[}]");
+        String[] functions = input.split("[{]|[}]");
 
         //
         // Parse the individual points: x -> 0
@@ -189,17 +185,9 @@ public class Inverses extends Analyzer
         Vector<String> theFunctions = new Vector<String>();
         for (String function : functions)
         {
-            // Avoid garbage
-            if (function.length() > 5 && function.charAt(0) == 'x')
-            {
-                // Take |x -> things| and extract: |things|
-                String theFunc = function.substring(function.indexOf("->") + 3);
-
-                // Rewrite the function to be in terms of x (not y)
-                theFunc = theFunc.replaceAll("y", "x");
-
-                theFunctions.add(theFunc);
-            }
+            function = function.replace( "#1", "x" ) ;
+            function = function.replace( "& [x]", "" ).trim() ;
+            theFunctions.add( function ) ;
         }
 
         // Printing...debugging
@@ -272,43 +260,44 @@ public class Inverses extends Analyzer
     private boolean isCandidate(StringBasedFunction function, String inverse, Domain domain)
     {
         StringBasedFunction invFunction = new StringBasedFunction(inverse);
+        invFunction.setDomain( domain ) ;
 
+        StringBasedFunction flippedInvFunction = new StringBasedFunction(
+        	inverse.replace( "Sqrt", "-Sqrt" ) ) ;
+        flippedInvFunction.setDomain( domain ) ;
+        	
         // Check both endpoints of the domain
         double y1 = function.evaluateAtPoint(domain.getLowerBound()).getReal();
         if (!inverseSatisfies(invFunction, domain.getLowerBound(), y1)) return false;
 
         double y2 = function.evaluateAtPoint(domain.getUpperBound()).getReal();
-        if (!inverseSatisfies(invFunction, domain.getUpperBound(), y2)) return false;
+        if(     ! inverseSatisfies( invFunction, domain.getUpperBound(), y2 )
+        	&&  ! inverseSatisfies( flippedInvFunction, domain.getUpperBound(), y2 ) )
+            	return false ;
 
         // Check a midpoint (for safety)
         double midX = Utilities.midpoint(domain.getLowerBound(), domain.getUpperBound());
         double midY = function.evaluateAtPoint(midX).getReal();
-        if (!inverseSatisfies(invFunction, midX, midY)) return false;
+        if(     ! inverseSatisfies( invFunction, midX, midY )
+        	&&	! inverseSatisfies( flippedInvFunction, midX, midY ) )
+        	return false ;
 
         return true;
     }
 
     private boolean inverseSatisfies(StringBasedFunction inverse, double x, double y)
     {
-        return Utilities.looseEqualDoubles(inverse.evaluateAtPoint(y).getReal(), x);
+    	double xComp = inverse.evaluateAtPoint( y ).getReal() ;
+        return Utilities.looseEqualDoubles( xComp, x ) ;
     }
     
-    //    InputForm[Solve[y-x(x-1)(x+1) == 0, x]]            
     private String inverseQuery(StringBasedFunction function)
     {
-        String query = "InputForm[Solve[";
+        String query = "InputForm[InverseFunction[";
 
-        query += "y - (";
+        query += function.toFullMathematicaString().replaceAll( "x", "#" ) ;
 
-        query += function.toFullMathematicaString();
-
-        query += ")";
-
-        query += " == 0";
-
-        query += ", x";
-
-        query += "]]";
+        query += " &]][x]" ;
 
         return query;
     }

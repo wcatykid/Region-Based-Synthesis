@@ -84,7 +84,7 @@ public class HorizontalLine implements Comparable<HorizontalLine>
         	}
         }
 
-        if( ! Utilities.equalDoubles( endX, firstNonExtremaIntersection ) )
+        if( ! Utilities.equalDoubles( beginX, firstNonExtremaIntersection ) )
         {
         	Point a = new Point( beginX, y ) ;
         	Point b = new Point( firstNonExtremaIntersection, y ) ;
