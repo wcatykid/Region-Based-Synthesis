@@ -16,11 +16,12 @@ public class InversesTest
 
         System.out.println(StringUtilities.generateTestStartString(testName, 0));
 
-        runInverse(1, "Sqrt[x]", 1, 5.0, "x^2");
-        runInverse(1, "x^2", 0, 5.0, "Sqrt[x]");
-        runInverse(1, "x^3", 0, 5.0, "x^(1/3)");
-        runInverse(1, "x^(1/3)", 0, 5.0, "x^3");
-        runInverse(1, "-x^3", 0, 1, "-((-1)^(2/3)*x^(1/3))");
+        runInverse(1, "Sqrt[x]", 1, 5.0, "(x^2 & )[x]");
+        runInverse(1, "x^2", 0, 5.0, "-Sqrt[x]");
+        //We now no longer support inversions beyond the second degree
+        //runInverse(1, "x^3", 0, 5.0, "x^(1/3)");
+        //runInverse(1, "x^(1/3)", 0, 5.0, "x^3");
+        //runInverse(1, "-x^3", 0, 1, "-((-1)^(2/3)*x^(1/3))");
         runInverse(1, "-x^2", 0, 1, "(-I)*Sqrt[x]");
         
 //        runInverse(1, "(x-1)(x+1)(x^2-4)", -5.0, 5.0, -1.5811388300841898, 0.0, 1.5811388300841898);
@@ -42,11 +43,12 @@ public class InversesTest
         StringBasedFunction function = new StringBasedFunction(func);
         function.setDomain(new Domain(lowerX, upperX));
 
-        StringBasedFunction computedInverse = Inverses.getInstance().computeInverse(function);
+        StringBasedFunction computedInverse = Inverses.getInstance().computeInverse( function ) ;
         
         //
         // Check we have the same lists: expected / computed
         //
+        Assertions.Assert( computedInverse != null ) ;
         Assertions.Assert(computedInverse.getFunction(), expected);
         
         System.out.println(StringUtilities.generateTestEndString(testName, indent));

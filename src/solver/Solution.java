@@ -88,6 +88,8 @@ public abstract class Solution
             ret += atom.toLatexString() + " + ";
         }
         
-        return ret.substring(0, ret.length() - 3);
+        if( ret.length() >= 3 )
+        	ret = ret.substring(0, ret.length() - 3) ; 
+        return ret ;
     }
 }

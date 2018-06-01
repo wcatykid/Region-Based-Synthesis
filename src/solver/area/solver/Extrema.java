@@ -36,14 +36,18 @@ public class Extrema
     	ArrayList<Extrema> output = new ArrayList<Extrema>() ;
         
     	Vector<Double> extrema = new Vector<Double>( ExtremeValues.getInstance().extrema( region.getBounds().get( 0 ), leftBound, rightBound ) ) ;
-        Collections.sort( extrema ) ;
-    	Vector<Double> extremaDir = Derivatives.getInstance().secondDerivativeAtPoints( region.getBounds().get( 0 ), extrema ) ;
     	
-    	if( extrema.size() != extremaDir.size() )
-    		throw new RuntimeException( "Retrieving concavity of function at extrema did not return 1 and only 1 value for each extrema." ) ;
+    	if( extrema.size() > 0 )
+    	{
+            Collections.sort( extrema ) ;
+        	Vector<Double> extremaDir = Derivatives.getInstance().secondDerivativeAtPoints( region.getBounds().get( 0 ), extrema ) ;
+        	
+        	if( extrema.size() != extremaDir.size() )
+        		throw new RuntimeException( "Retrieving concavity of function at extrema did not return 1 and only 1 value for each extrema." ) ;
 
-    	for( int i = 0 ; i < extrema.size() ; ++i )
-    		output.add( new Extrema( extrema.get( i ), extremaDir.get( i ) ) ) ;
+        	for( int i = 0 ; i < extrema.size() ; ++i )
+        		output.add( new Extrema( extrema.get( i ), extremaDir.get( i ) ) ) ;
+    	}
         
         return output ;
     }

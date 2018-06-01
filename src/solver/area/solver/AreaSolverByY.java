@@ -2,12 +2,15 @@ package solver.area.solver;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 import java.util.Vector;
 
 import exceptions.DomainException;
+import exceptions.SolvingException;
 import math.analysis.derivatives.Derivatives;
 import math.analysis.intersection.Intersection;
 import math.integral.DefiniteIntegral;
+import representation.ComplexNumber;
 import representation.Point;
 import representation.bounds.Bound;
 import representation.bounds.functions.BoundedFunction;
@@ -19,6 +22,7 @@ import representation.regions.TopBottom;
 import solver.Solution;
 import solver.Solver;
 import solver.area.AreaSolution;
+import solver.area.AreaSolutionByY;
 import solver.area.regionComputer.GraphRegionExtractor;
 import solver.area.regionComputer.undirectedPlanarGraph.NodePointT;
 import solver.area.regionComputer.undirectedPlanarGraph.PlanarEdgeAnnotation;
@@ -38,6 +42,27 @@ public class AreaSolverByY extends Solver
         super();
     }
 
+    @Override
+    public Solution solve( Set<Region> regions ) throws SolvingException, DomainException
+    {
+    	AreaSolutionByY overallSolution = new AreaSolutionByY() ;
+
+        for( Region region : regions )
+        {
+        	AreaSolutionByY regionSolution = this.solve( region ) ;
+            
+            if( regionSolution == null )
+            	throw new SolvingException( "Solving region " + region + " failed." ) ;
+
+            overallSolution.add( regionSolution.getIntegralExpressions() ) ;
+            
+            if( regionSolution.getFailedInversionFlag() )
+            	overallSolution.setFailedInversionFlag() ;
+        }
+        
+        return overallSolution ;
+    }
+    
     /**
      * @param region -- a region
      * @return the solution to this problem with respect to y (orthogonal to standard solution: by x)
@@ -45,7 +70,7 @@ public class AreaSolverByY extends Solver
      * @throws DomainException 
      */
     @Override
-    public Solution solve(Region region) throws DomainException
+    public AreaSolutionByY solve(Region region) throws DomainException
     {
         return solveWithRespectToY(region);
     }
@@ -60,7 +85,7 @@ public class AreaSolverByY extends Solver
      *        (4) Construct the integral expressions.
      * @throws DomainException 
      */
-    private Solution solveWithRespectToY(Region region) throws DomainException
+    private AreaSolutionByY solveWithRespectToY(Region region) throws DomainException
     {
     	if( 	( region.getTop   ().getBounds().size() != 1 )
     		||	( region.getBottom().getBounds().size() != 1 ) )
@@ -148,7 +173,7 @@ public class AreaSolverByY extends Solver
         			allIntersections, leftBound, rightBound, region.getLeft().getMaximum().getY() ) ) ;
         }
         
-        if( slopesAtBottomBounds.getFirst() <= 0 ) //If the bottom function at the left is decreasing
+        if( slopesAtBottomBounds.getFirst() < 0 ) //If the bottom function at the left is decreasing
         {	//Get the horizontal segment going from the bottom left to the right
         	//Note that this is redundant (but not problematically) if the left bound is a point, not a line.
         	horizontals.add( HorizontalLine.getHorizontalLineToTheRightOf( topExtrema, botExtrema,
@@ -161,7 +186,7 @@ public class AreaSolverByY extends Solver
         			allIntersections, rightBound, leftBound, region.getRight().getMaximum().getY() ) ) ;
         }
         
-        if( slopesAtBottomBounds.getSecond() >= 0 ) //If the bottom function at the right is increasing
+        if( slopesAtBottomBounds.getSecond() > 0 ) //If the bottom function at the right is increasing
         {	//Get the horizontal segment going from the bottom right to the left
         	//Note that this is redundant (but not problematically) if the right bound is a point, not a line.
         	horizontals.add( HorizontalLine.getHorizontalLineToTheLeftOf( topExtrema, botExtrema,
@@ -385,9 +410,9 @@ public class AreaSolverByY extends Solver
         //		throw new RuntimeException( "While solving w.r.t. Y:  Found a"
         //				+ " region from the extracted graph that is not one-to-one." ) ;
 
-
-
-        return solveSimpleRegions( regions ) ;
+        AreaSolutionByY solution = solveSimpleRegions( regions ) ;
+        solution.addRangeRegion( regions.toArray( new Region[ 0 ] ) ) ;
+        return solution ;
     }
     
     private void addEdgeToGraphHorizontal( PlanarGraph<NodePointT,PlanarEdgeAnnotation> graph, Double x1, Double x2, Double y )
@@ -457,8 +482,16 @@ public class AreaSolverByY extends Solver
         
     	Vector<Double> slopes = Derivatives.getInstance().firstDerivativeAtPoints( region.getBounds().get( 0 ), pts ) ;
 
-    	if( slopes.size() != 2 )
+    	if( slopes.size() == 1 )
+    	{
+    		//It's possible that the first derivative is a constant, and thus Mathematica only returns
+    		// one value.
+            return new Pair<Double,Double>( slopes.get( 0 ), slopes.get( 0 ) ) ;
+    	}
+    	else if( slopes.size() != 2 )
+    	{
     		throw new RuntimeException( "Retrieving slopes of function at two points did not return two slopes." ) ;
+    	}
     	
         return new Pair<Double,Double>( slopes.get( 0 ), slopes.get( 1 ) ) ;
     }
@@ -467,12 +500,16 @@ public class AreaSolverByY extends Solver
      * @param regions -- a set of simple regions
      * @return a solution (of definite integrals) describing the solution of this set of simple regions
      */
-    private Solution solveSimpleRegions(Vector<Region> regions)
+    private AreaSolutionByY solveSimpleRegions(Vector<Region> regions)
     {
-        AreaSolution solution = new AreaSolution();
+    	AreaSolutionByY solution = new AreaSolutionByY();
         for (Region region : regions)
         {
-            solution.add(solveSimpleRegion(region));
+        	Solution s = solveSimpleRegion( region ) ;
+        	if( s != null )
+        		solution.add( s ) ;
+        	else
+        		solution.setFailedInversionFlag() ;
         }
         return solution;
     }
@@ -565,8 +602,14 @@ public class AreaSolverByY extends Solver
             // Evaluate a midpoint to see which is smaller (establishing sides of the functions)
             //
             double midY = Utilities.midpoint(bottom.getY(), top.getY());
-            double firstX = bounds.getFirst().evaluateAtPointByY(midY).getReal();
-            double secondX = bounds.getSecond().evaluateAtPointByY(midY).getReal();
+            ComplexNumber firstXComplex  = bounds.getFirst ().evaluateAtPointByY( midY ) ;
+            ComplexNumber secondXComplex = bounds.getSecond().evaluateAtPointByY( midY ) ;
+            
+            if( firstXComplex == null || secondXComplex == null )
+            	return null ;
+            
+            double firstX  = firstXComplex .getReal() ;
+            double secondX = secondXComplex.getReal() ;
 
             Bound left = null;
             Bound right = null;

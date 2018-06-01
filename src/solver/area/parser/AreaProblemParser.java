@@ -1,5 +1,7 @@
 package solver.area.parser;
 
+import java.util.Arrays;
+
 import representation.bounds.functions.Domain;
 import solver.area.TextbookAreaProblem;
 import solver.parser.ProblemParseUtilities;
@@ -33,7 +35,7 @@ public class AreaProblemParser implements ProblemParser
     {
         String[] functions = ProblemParseUtilities.extractFunctions(_problemString);
 
-        System.out.println(functions);
+        System.out.println( Arrays.toString( functions ) ) ;
 
         Domain domain = ProblemParseUtilities.extractDomain(_problemString);
 

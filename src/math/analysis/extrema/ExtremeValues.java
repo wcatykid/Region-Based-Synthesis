@@ -226,7 +226,7 @@ public class ExtremeValues extends Analyzer
      */
     public Vector<Double> extrema(Bound f, double lowerX, double upperX)
     {
-        return extremaQuery(f, lowerX + " <= x <= " + upperX);
+        return extremaQuery(f, lowerX + " < x < " + upperX);
     }
 
     /**

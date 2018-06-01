@@ -213,6 +213,9 @@ public class StringBasedFunction extends BoundedFunction
     {
         StringBasedFunction inverse = (StringBasedFunction)inverse();
 
+        if( inverse == null )
+        	return null ;
+        
         return LocalMathematicaCasInterface.getInstance().evaluateAtPoint(inverse.getFunction(), y);
     }
 
@@ -226,7 +229,7 @@ public class StringBasedFunction extends BoundedFunction
 
         return _inverse;
     }
-
+    
     /**
      * @param function -- a String-based function
      * @return whether the function contains an imaginary component: I in Mathematica refers to \sqrt{-1}

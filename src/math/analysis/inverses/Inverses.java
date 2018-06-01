@@ -34,9 +34,17 @@ public class Inverses extends Analyzer
      * @param function
      * @return the inverse of the given function along with the codomain as domain of the inverse
      */
-    public StringBasedFunction computeInverse(StringBasedFunction function)
+    public StringBasedFunction computeInverse( StringBasedFunction function )
     {
-        return getInverse(function, getInverses(function));
+    	try
+    	{
+    		return getInverse( function, getInverses( function ) ) ;
+    	}
+    	catch( Exception exc )
+    	{
+    		System.out.println( "Failed function inversion for function: " + function ) ;
+    		return null ;
+    	}
     }
 
     /**
@@ -233,11 +241,11 @@ public class Inverses extends Analyzer
 
         if (acceptable.size() > 1)
         {
-            System.err.println("More than one candidate inverse function found for " + function.getFunction());
+            System.out.println("More than one candidate inverse function found for " + function.getFunction());
         }
         else if (acceptable.isEmpty())
         {
-            System.err.println("No candidates found for inverse: " + function.getFunction());
+            System.out.println("No candidates found for inverse: " + function.getFunction());
         }
 
         System.out.println("Chose inverse: " + acceptable.get(0));
@@ -262,8 +270,11 @@ public class Inverses extends Analyzer
         StringBasedFunction invFunction = new StringBasedFunction(inverse);
         invFunction.setDomain( domain ) ;
 
-        StringBasedFunction flippedInvFunction = new StringBasedFunction(
-        	inverse.replace( "Sqrt", "-Sqrt" ) ) ;
+        StringBasedFunction flippedInvFunction = null ;
+        if( inverse.indexOf( "-Sqrt" ) >= 0 )
+        	flippedInvFunction = new StringBasedFunction( inverse.replace( "-Sqrt", "Sqrt" ) ) ;
+        else
+        	flippedInvFunction = new StringBasedFunction( inverse.replace( "Sqrt", "(-Sqrt)" ) ) ;
         flippedInvFunction.setDomain( domain ) ;
         	
         // Check both endpoints of the domain

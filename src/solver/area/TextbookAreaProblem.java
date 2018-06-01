@@ -8,23 +8,16 @@ import solver.TextbookProblem;
  */
 public class TextbookAreaProblem extends TextbookProblem
 {
-    public TextbookAreaProblem(String[] functions, Domain domain, String data, double answer)
-    {
-        super(functions, domain, data, answer);
-    }
-
-    public TextbookAreaProblem(String[] functions, Domain domain, String data)
-    {
-        this(functions, domain, data, DEFAULT_ANSWER);
-    }
-    
+	private boolean _attemptSolveByY            = false ;
+	private boolean _expectInvertibilitySuccess = false ;
+	
     /**
      * @param f -- the set of functions (in terms of variable x)
      * @param data -- metadata describing the problem source.
      */
-    public TextbookAreaProblem(String[] f, String data)
+    public TextbookAreaProblem( String[] f, String data )
     {
-        this(f, null, data, DEFAULT_ANSWER);
+        this( f, null, data, DEFAULT_ANSWER ) ;
     }
     
     /**
@@ -32,8 +25,24 @@ public class TextbookAreaProblem extends TextbookProblem
      * @param data -- metadata describing the problem source.
      * @param answer -- the numeric answer for this problem
      */
-    public TextbookAreaProblem(String[] f, String data, double answer)
+    public TextbookAreaProblem( String[] f, String data, double answer )
     {
-        this(f, null, data, answer);
+        this( f, null, data, answer ) ;
     }
+
+    public TextbookAreaProblem( String[] functions, Domain domain, String data )
+    {
+        this( functions, domain, data, DEFAULT_ANSWER ) ;
+    }
+    
+    public TextbookAreaProblem( String[] functions, Domain domain, String data, double answer )
+    {
+        super( functions, domain, data, answer ) ;
+    }
+    
+    public boolean getAttemptSolveByY() { return _attemptSolveByY ; }
+    public void setAttemptSolveByY( boolean value ) { _attemptSolveByY = value ; }
+
+    public boolean getExpectInvertibilitySuccess() { return _expectInvertibilitySuccess ; }
+    public void setExpectInvertibilitySuccess( boolean value ) { _expectInvertibilitySuccess = value ; }
 }

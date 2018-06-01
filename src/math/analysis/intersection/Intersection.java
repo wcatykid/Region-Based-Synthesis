@@ -77,11 +77,11 @@ public class Intersection extends Analyzer
         //
         String query = constructQuery(f, lowerXf, upperXf, g, lowerXg, upperXg);
 
-System.out.println("Query: |" + query + "|");
+        System.out.println("Query: |" + query + "|");
 
         String result = LocalMathematicaCasInterface.getInstance().query(query);
 
-System.out.println("|" + result + "|");
+        System.out.println("|" + result + "|");
 
         Vector<Point> points = parsePoints(f, result);
 

@@ -8,6 +8,7 @@ import exceptions.SolvingException;
 import representation.regions.Region;
 import solver.Main;
 import solver.area.AreaSolution;
+import solver.area.AreaSolutionByY;
 import solver.area.TextbookAreaProblem;
 import solver.area.parser.AreaProblemParser;
 import solver.area.regionComputer.RegionExtractor;
@@ -68,23 +69,26 @@ public class SolverMain extends Main
             e.printStackTrace();
         }
         
-        AreaSolverByX solverY = new AreaSolverByX();
-        AreaSolution byY = null;
-        try
+        AreaSolverByY solverY = new AreaSolverByY();
+        AreaSolutionByY byY = null;
+        
+        if( problem.getAttemptSolveByY() )
         {
-            byY = (AreaSolution)solverY.solve(solutionRegions);
-        }
-        catch (SolvingException e)
-        {
-            System.err.println("Failed to solve by Y");
-            e.printStackTrace();
+            try
+            {
+                byY = (AreaSolutionByY)solverY.solve(solutionRegions);
+            }
+            catch (SolvingException e)
+            {
+                System.err.println("Failed to solve by Y");
+                e.printStackTrace();
+            }
         }
         
         //
         // Combine the individual region solutions together for a final solution
         //
         double computedAnswerX = byX.evaluate();
-        double computedAnswerY = byY.evaluate();
         
         if (!Utilities.looseEqualDoubles(computedAnswerX,  problem.getAnswer()))
         {
@@ -92,19 +96,31 @@ public class SolverMain extends Main
                                computedAnswerX + ") Expected (" + problem.getAnswer() + ")");
         }
         
-        if (!Utilities.looseEqualDoubles(computedAnswerY,  problem.getAnswer()))
+        if( problem.getAttemptSolveByY() )
         {
-            System.err.println("Expected computed answer to equate to real answer; did not: computed(" +
-                               computedAnswerY + ") Expected (" + problem.getAnswer() + ")");
+	        if( ! byY.getFailedInversionFlag() )
+	        {
+	            double computedAnswerY = byY.evaluate();
+	            
+	            if (!Utilities.looseEqualDoubles(computedAnswerY,  problem.getAnswer()))
+	            {
+	                System.err.println("Expected computed answer to equate to real answer; did not: computed(" +
+	                                   computedAnswerY + ") Expected (" + problem.getAnswer() + ")");
+	            }
+	            
+	            if (!Utilities.looseEqualDoubles(computedAnswerX,  computedAnswerY))
+	            {
+	                System.err.println("Solution by X and Y do not equate (" +
+	                                   computedAnswerX + ") vs. (" + computedAnswerY + ")");
+	            }
+	        }
+	        else
+	        {
+	        	System.out.println( "No solution by Y found due to failure to invert a function, but there exists a method to invert the function." ) ;
+	        }
         }
         
-        if (!Utilities.looseEqualDoubles(computedAnswerX,  computedAnswerY))
-        {
-            System.err.println("Solution by X and Y do not equate (" +
-                               computedAnswerX + ") vs. (" + computedAnswerY + ")");
-        }
-        
-        return computedAnswerX;
+        return computedAnswerX ;
     }
     
     public static TextbookAreaProblem makeAreaProblem(String problemString)

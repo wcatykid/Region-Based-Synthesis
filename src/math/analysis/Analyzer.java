@@ -33,9 +33,8 @@ public abstract class Analyzer
         {
             Point pt = new Point(x, f.evaluateAtPoint(x).getReal());
 
-            points.add(pt);
-            
-//            System.out.println("Intersection point for x (" + x + ") " + pt);
+            if( ! points.contains( pt ) )
+            	points.add( pt ) ;
         }
 
         return points;
@@ -74,32 +73,26 @@ public abstract class Analyzer
         	    System.err.println("Boolean detected in |" + point + "|");
         	}
 
-            // Avoid garbage
-            if (p.length() > 5 && p.charAt(0) == 'x')
+            try
             {
-                // Take |x -> things| and extract: |things|
-                String x_value = p.substring( p.indexOf("->") + 3) ;
-                
-                xs.add(Double.parseDouble(x_value));
+	            // Avoid garbage
+	            if( p.length() > 5 && p.charAt(0) == 'x' )
+	            {
+	                // Take |x -> things| and extract: |things|
+	                p = p.substring( p.indexOf( "->" ) + 3 ) ;
+	            }
+
+	            if( p.length() > 0 )
+	            {
+                	Double d = Double.parseDouble( p ) ;
+               		xs.add( d ) ;
+	            }
             }
-            else if( p.length() > 0 )
+            catch( NumberFormatException e )
             {
-                try {
-                xs.add(Double.parseDouble(p));
-                } catch (NumberFormatException e)
-                {
-                    System.err.println("Expected formatting issue when parsing (non)-double " + p);
-                }
+                System.err.println("Expected formatting issue when parsing (non)-double " + p);
             }
         }
-        
-//        //
-//        // Printing...debugging
-//        //
-//        for (Double x : xs)
-//        {
-//            System.out.println("|" + x + "|");
-//        }
 
         return xs;
     }
